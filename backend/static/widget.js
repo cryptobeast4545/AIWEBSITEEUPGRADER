@@ -152,8 +152,46 @@
       fixes.buttons++;
     });
   }
+  function parseRGB(s) { var m = (s || '').match(/rgba?\(([\d.]+),\s*([\d.]+),\s*([\d.]+)(?:,\s*([\d.]+))?/); return m ? [+m[1], +m[2], +m[3], m[4] === undefined ? 1 : +m[4]] : null; }
+  function lum(c) { var a = c.slice(0, 3).map(function (v) { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }); return 0.2126 * a[0] + 0.7152 * a[1] + 0.0722 * a[2]; }
+  function ratio(a, b) { var l1 = lum(a), l2 = lum(b); return (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05); }
+  function bgOf(el) {
+    for (var n = el; n && n.nodeType === 1; n = n.parentElement) {
+      var cs = getComputedStyle(n);
+      if (cs.backgroundImage && cs.backgroundImage !== 'none') return null;
+      var c = parseRGB(cs.backgroundColor);
+      if (c && c[3] > 0.9) return c;
+    }
+    return [255, 255, 255, 1];
+  }
+  function fixContrast() {
+    var n = 0;
+    document.querySelectorAll('p,span,a,li,h1,h2,h3,h4,h5,h6,label,button,td,th,small,div,[role=button]').forEach(function (el) {
+      if (n > 1500 || isMine(el) || el.dataset.alCt) return;
+      var hasText = Array.prototype.some.call(el.childNodes, function (c) { return c.nodeType === 3 && c.textContent.trim(); });
+      if (!hasText) return;
+      n++;
+      var cs = getComputedStyle(el), fg = parseRGB(cs.color), bg = bgOf(el);
+      if (!fg || !bg) return;
+      var big = parseFloat(cs.fontSize) >= 24 || (parseFloat(cs.fontSize) >= 18.66 && +cs.fontWeight >= 700);
+      var need = big ? 3 : 4.5;
+      if (ratio(fg, bg) >= need) return;
+      var dark = lum(bg) > 0.4, c = fg.slice(0, 3);
+      for (var i = 0; i < 20 && ratio(c, bg) < need; i++) c = c.map(function (v) { return dark ? Math.max(0, v * 0.85 - 4) : Math.min(255, v * 1.15 + 8); });
+      if (ratio(c, bg) < need) c = dark ? [0, 0, 0] : [255, 255, 255];
+      el.style.setProperty('color', 'rgb(' + c.map(Math.round).join(',') + ')', 'important');
+      el.dataset.alCt = '1';
+      fixes.contrast = (fixes.contrast || 0) + 1;
+    });
+  }
   function fixKeyboard() {
-    document.querySelectorAll('[onclick]:not(a):not(button):not(input):not(select):not(textarea), [role=button]:not(button)').forEach(function (el) {
+    document.querySelectorAll('div,span,li,img').forEach(function (el) {
+      if (isMine(el) || el.dataset.alKb || el.getAttribute('role') || el.hasAttribute('tabindex') || el.closest('a,button,label,[role=button]')) return;
+      if (getComputedStyle(el).cursor !== 'pointer' || el.querySelector('a,button,input,select,textarea') || (el.textContent || '').trim().length > 60) return;
+      if (el.parentElement && getComputedStyle(el.parentElement).cursor === 'pointer' && !el.parentElement.dataset.alKb && el.parentElement.tagName !== 'BODY') return;
+      el.setAttribute('onclick-al', '1');
+    });
+    document.querySelectorAll('[onclick]:not(a):not(button):not(input):not(select):not(textarea), [onclick-al], [role=button]:not(button)').forEach(function (el) {
       if (isMine(el) || el.dataset.alKb) return;
       el.dataset.alKb = '1';
       if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex', '0');
@@ -202,7 +240,7 @@
   });
   function remediate() {
     if (!AUTOFIX || !cfg.autofix) return;
-    try { fixMisc(); addSkipLink(); fixImages(); fixForms(); fixButtons(); fixKeyboard(); } catch (e) { /* never break host page */ }
+    try { fixMisc(); addSkipLink(); fixImages(); fixForms(); fixButtons(); fixKeyboard(); fixContrast(); } catch (e) { /* never break host page */ }
     renderState();
   }
   var moTimer;
@@ -523,7 +561,7 @@
     $('al-engine').textContent = cfg.sarvam && VOICE_ON ? '· Sarvam AI' : '· browser';
     var aiImgs = document.querySelectorAll('img[data-al-alt=ai]').length;
     $('al-fixes').innerHTML = !AUTOFIX || !cfg.autofix ? 'Auto-fix is turned off for this site.' :
-      '<b>' + fixes.images + '</b> images given alt text' + (aiImgs ? ' (' + aiImgs + ' by AI vision)' : '') + '<br><b>' + fixes.labels + '</b> form fields labelled<br><b>' + fixes.buttons + '</b> buttons/links named<br><b>' + fixes.keyboard + '</b> controls made keyboard-accessible<br>' +
+      '<b>' + fixes.images + '</b> images given alt text' + (aiImgs ? ' (' + aiImgs + ' by AI vision)' : '') + '<br><b>' + fixes.labels + '</b> form fields labelled<br><b>' + fixes.buttons + '</b> buttons/links named<br><b>' + fixes.keyboard + '</b> controls made keyboard-accessible<br>' + (fixes.contrast ? '<b>' + fixes.contrast + '</b> low-contrast texts fixed to WCAG 4.5:1<br>' : '') +
       (fixes.skip ? '<b>✓</b> Skip-to-content link added<br>' : '') + (fixes.lang ? '<b>✓</b> Page language set<br>' : '') + (fixes.dialogs ? '<b>' + fixes.dialogs + '</b> dialogs given role + focus trap<br>' : '') + (fixes.frames ? '<b>' + fixes.frames + '</b> iframes titled' : '');
   }
   function ringColor(s) { return s >= 90 ? '#10B981' : s >= 60 ? '#F59E0B' : '#EF4444'; }
@@ -541,7 +579,13 @@
     build();
     fetch(API + '/widget/' + encodeURIComponent(SITE) + '/config').then(function (r) { return r.ok ? r.json() : {}; }).catch(function () { return {}; })
       .then(function (c) { Object.assign(cfg, c); remediate(); renderState(); if (document.body) mo.observe(document.body, { childList: true, subtree: true }); });
-    window.AccessLayer = { open: function () { root.getElementById('al-fab').click(); }, scan: runScan, prefs: function () { return Object.assign({}, prefs); }, speak: speak };
+    window.AccessLayer = { open: function () { root.getElementById('al-fab').click(); }, scan: runScan, prefs: function () { return Object.assign({}, prefs); }, speak: speak,
+      destroy: function () {
+        mo.disconnect(); stopSpeech(); stopVoice(); clickRead = false;
+        [host, styleEl, guide, document.querySelector('.al-skip')].forEach(function (n) { if (n && n.parentNode) n.parentNode.removeChild(n); });
+        document.documentElement.className = document.documentElement.className.replace(/\bal-[\w-]+/g, '').trim();
+        window.__accessLayer = false; delete window.AccessLayer;
+      } };
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();

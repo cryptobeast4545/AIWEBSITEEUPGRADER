@@ -1,6 +1,7 @@
 import json
 import os
 import logging
+from urllib.parse import urlparse, unquote
 
 import asyncpg
 from fastapi import HTTPException
@@ -65,7 +66,14 @@ async def connect():
     if not url:
         logger.warning("SUPABASE_DB_URL not set; database features disabled")
         return
-    _pool = await asyncpg.create_pool(url, min_size=1, max_size=8, statement_cache_size=0,
+    kw = {"dsn": url}
+    u = urlparse(url)
+    pooler = os.environ.get("SUPABASE_POOLER_HOST")
+    if pooler and u.hostname and u.hostname.startswith("db.") and u.hostname.endswith(".supabase.co"):
+        ref = u.hostname.split(".")[1]
+        kw = {"host": pooler, "port": 6543, "user": f"postgres.{ref}", "password": unquote(u.password or ""),
+              "database": (u.path or "/postgres").lstrip("/") or "postgres"}
+    _pool = await asyncpg.create_pool(**kw, min_size=1, max_size=8, statement_cache_size=0,
                                       init=_init_conn, command_timeout=30)
     async with _pool.acquire() as conn:
         await conn.execute(SCHEMA)
