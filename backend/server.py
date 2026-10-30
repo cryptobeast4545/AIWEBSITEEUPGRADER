@@ -534,3 +534,27 @@ async def wa_log(user: dict = Depends(require_user)):
 app.include_router(api)
 app.include_router(clerk_router)
 app.add_middleware(CORSMiddleware, allow_credentials=False, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
+
+# ── Serve the compiled React frontend (for unified Render deployment) ──────────
+# The build_frontend.sh script copies the React build into backend/static/frontend/
+# before the Python process starts.  If the folder is absent (local dev), skip silently.
+_FRONTEND_DIR = ROOT_DIR / "static" / "frontend"
+if _FRONTEND_DIR.exists():
+    from fastapi.staticfiles import StaticFiles
+    from fastapi.responses import HTMLResponse
+
+    # Mount the React app's own asset folders first so they win over the catch-all
+    for _sub in ("static",):
+        _p = _FRONTEND_DIR / _sub
+        if _p.exists():
+            app.mount(f"/{_sub}", StaticFiles(directory=str(_p)), name=f"react_{_sub}")
+
+    @app.get("/{full_path:path}", include_in_schema=False)
+    async def serve_react(full_path: str):
+        """Catch-all: return the React index.html so client-side routing works."""
+        # Try to serve an exact file from the build root first (e.g. favicon.ico, manifest.json)
+        candidate = _FRONTEND_DIR / full_path
+        if candidate.exists() and candidate.is_file():
+            return FileResponse(str(candidate))
+        index = _FRONTEND_DIR / "index.html"
+        return HTMLResponse(index.read_text(encoding="utf-8"))

@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>AccessLayer – Complete Project Documentation</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --green:#10B981; --green-dark:#059669; --green-dim:#064E3B;
+    --bg:#0B0F19; --card:#111827; --card2:#1F2937;
+    --border:#374151; --text:#F9FAFB; --muted:#9CA3AF;
+    --red:#EF4444; --yellow:#F59E0B; --blue:#3B82F6; --purple:#8B5CF6;
+    --orange:#F97316;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    font-size: 14px;
+  }
+
+  /* ── Cover Page ─────────────────────────────────────── */
+  .cover {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0B0F19 0%, #0D1B2A 40%, #0B1E14 100%);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center; padding: 60px 40px;
+    position: relative; overflow: hidden;
+    page-break-after: always;
+  }
+  .cover::before {
+    content:'';
+    position:absolute; inset:0;
+    background: radial-gradient(ellipse 80% 60% at 50% 30%, rgba(16,185,129,.15) 0%, transparent 70%);
+  }
+  .cover-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(16,185,129,.12); border: 1px solid rgba(16,185,129,.35);
+    border-radius: 100px; padding: 6px 18px;
+    font-size: 12px; font-weight: 600; letter-spacing:.08em;
+    color: var(--green); text-transform: uppercase;
+    margin-bottom: 32px; position: relative;
+  }
+  .cover h1 {
+    font-size: clamp(36px, 6vw, 64px);
+    font-weight: 900; letter-spacing: -2px;
+    line-height: 1.05;
+    background: linear-gradient(135deg, #fff 0%, var(--green) 60%, #059669 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 20px; position: relative;
+  }
+  .cover-sub {
+    font-size: 18px; color: var(--muted); max-width: 580px;
+    margin: 0 auto 48px; position: relative;
+  }
+  .cover-meta {
+    display: flex; gap: 32px; justify-content: center; flex-wrap: wrap;
+    position: relative;
+  }
+  .cover-meta-item { text-align: center; }
+  .cover-meta-item .label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing:.1em; }
+  .cover-meta-item .value { font-size: 15px; font-weight: 700; color: var(--text); }
+
+  /* ── Layout ─────────────────────────────────────────── */
+  .page { max-width: 1000px; margin: 0 auto; padding: 60px 40px; }
+
+  /* ── Section headings ────────────────────────────────── */
+  .section-label {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .12em; color: var(--green);
+    margin-bottom: 12px;
+  }
+  .section-label::before {
+    content:''; display:block; width:18px; height:2px; background:var(--green);
+  }
+  h2 {
+    font-size: 30px; font-weight: 800; letter-spacing:-1px;
+    margin-bottom: 8px; color: var(--text);
+  }
+  h3 { font-size: 18px; font-weight: 700; margin-bottom: 12px; color: var(--text); }
+  h4 { font-size: 14px; font-weight: 700; margin-bottom: 8px; color: var(--text); }
+  p { color: var(--muted); margin-bottom: 16px; }
+  p strong { color: var(--text); }
+
+  .divider { border: none; border-top: 1px solid var(--border); margin: 48px 0; }
+
+  /* ── Cards ───────────────────────────────────────────── */
+  .card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 16px; padding: 24px;
+  }
+  .card-grid { display: grid; gap: 16px; }
+  .card-grid-2 { grid-template-columns: repeat(2, 1fr); }
+  .card-grid-3 { grid-template-columns: repeat(3, 1fr); }
+  .card-grid-4 { grid-template-columns: repeat(4, 1fr); }
+
+  /* ── Stat boxes ──────────────────────────────────────── */
+  .stat-box {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 16px; padding: 24px 20px; text-align: center;
+  }
+  .stat-box .num {
+    font-size: 36px; font-weight: 900; letter-spacing:-2px;
+    background: linear-gradient(135deg, #fff 0%, var(--green) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .stat-box .lbl { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+  /* ── Pill / Tag ──────────────────────────────────────── */
+  .pill {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 10px; border-radius: 100px; font-size: 11px; font-weight: 600;
+  }
+  .pill-green { background: rgba(16,185,129,.15); color: var(--green); border: 1px solid rgba(16,185,129,.3); }
+  .pill-red   { background: rgba(239,68,68,.12);  color: var(--red);   border: 1px solid rgba(239,68,68,.25); }
+  .pill-blue  { background: rgba(59,130,246,.12); color: var(--blue);  border: 1px solid rgba(59,130,246,.25); }
+  .pill-yellow{ background: rgba(245,158,11,.12); color: var(--yellow);border: 1px solid rgba(245,158,11,.25); }
+  .pill-purple{ background: rgba(139,92,246,.12); color: var(--purple);border: 1px solid rgba(139,92,246,.25); }
+  .pill-orange{ background: rgba(249,115,22,.12); color: var(--orange);border: 1px solid rgba(249,115,22,.25); }
+
+  /* ── Architecture diagram ────────────────────────────── */
+  .arch {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 20px; padding: 40px; overflow: hidden;
+  }
+  .arch-row {
+    display: flex; align-items: center; justify-content: center;
+    gap: 0; flex-wrap: wrap; margin-bottom: 0;
+  }
+  .arch-box {
+    background: var(--card2); border: 1px solid var(--border);
+    border-radius: 14px; padding: 18px 22px; text-align: center;
+    min-width: 130px; position: relative;
+  }
+  .arch-box .icon { font-size: 24px; margin-bottom: 8px; }
+  .arch-box .title { font-size: 12px; font-weight: 700; color: var(--text); }
+  .arch-box .sub { font-size: 10px; color: var(--muted); margin-top: 3px; }
+  .arch-arrow {
+    flex: 0 0 40px; text-align: center; color: var(--green);
+    font-size: 18px; font-weight: 700; display: flex;
+    align-items: center; justify-content: center;
+  }
+  .arch-section-title {
+    font-size: 10px; text-transform: uppercase; letter-spacing:.1em;
+    color: var(--muted); text-align: center; margin-bottom: 12px;
+  }
+  .arch-group {
+    border: 1px dashed var(--border); border-radius: 16px;
+    padding: 20px 16px 16px; position: relative; margin-bottom: 20px;
+  }
+  .arch-group-label {
+    position: absolute; top: -10px; left: 16px;
+    background: var(--card); padding: 0 8px;
+    font-size: 10px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .1em; color: var(--muted);
+  }
+
+  /* ── Flow diagram ────────────────────────────────────── */
+  .flow {
+    display: flex; align-items: stretch; gap: 0;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 16px; overflow: hidden;
+  }
+  .flow-step {
+    flex: 1; padding: 24px 20px; text-align: center;
+    border-right: 1px solid var(--border); position: relative;
+  }
+  .flow-step:last-child { border-right: none; }
+  .flow-step .step-num {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--green-dim); border: 1px solid var(--green);
+    color: var(--green); font-size: 12px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 12px;
+  }
+  .flow-step .step-icon { font-size: 22px; margin-bottom: 8px; }
+  .flow-step .step-title { font-size: 12px; font-weight: 700; color: var(--text); }
+  .flow-step .step-desc { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+  /* ── Code block ──────────────────────────────────────── */
+  pre, code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+  }
+  pre {
+    background: #0D1117; border: 1px solid var(--border);
+    border-radius: 12px; padding: 20px; overflow-x: auto;
+    margin: 16px 0; line-height: 1.6;
+  }
+  .token-green { color: #7ee787; }
+  .token-blue  { color: #79c0ff; }
+  .token-yellow{ color: #e3b341; }
+  .token-red   { color: #ff7b72; }
+  .token-muted { color: #6e7681; }
+
+  /* ── Problem / Solution ──────────────────────────────── */
+  .problem-card {
+    background: rgba(239,68,68,.06); border: 1px solid rgba(239,68,68,.2);
+    border-radius: 14px; padding: 20px;
+  }
+  .solution-card {
+    background: rgba(16,185,129,.06); border: 1px solid rgba(16,185,129,.25);
+    border-radius: 14px; padding: 20px;
+  }
+  .vs-grid { display: grid; grid-template-columns: 1fr 40px 1fr; gap: 0; align-items: start; }
+  .vs-divider { display: flex; align-items: center; justify-content: center; padding-top: 24px; }
+  .vs-badge {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--card2); border: 1px solid var(--border);
+    font-size: 11px; font-weight: 800; color: var(--muted);
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* ── Feature rows ────────────────────────────────────── */
+  .feature-row {
+    display: grid; grid-template-columns: 48px 1fr;
+    gap: 16px; align-items: start;
+    padding: 20px 0; border-bottom: 1px solid var(--border);
+  }
+  .feature-row:last-child { border-bottom: none; }
+  .feature-icon {
+    width: 48px; height: 48px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; flex-shrink: 0;
+  }
+
+  /* ── Table ───────────────────────────────────────────── */
+  table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+  th {
+    text-align: left; padding: 10px 16px;
+    background: var(--card2); font-size: 11px;
+    text-transform: uppercase; letter-spacing: .1em; color: var(--muted);
+  }
+  td { padding: 12px 16px; border-bottom: 1px solid var(--border); font-size: 13px; vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  td strong { color: var(--text); }
+
+  /* ── Score ring ──────────────────────────────────────── */
+  .score-ring-wrap { text-align: center; }
+  .score-ring-wrap svg { display: block; margin: 0 auto; }
+
+  /* ── Check list ──────────────────────────────────────── */
+  .check-list { list-style: none; }
+  .check-list li {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 8px 0; font-size: 13px; color: var(--muted);
+    border-bottom: 1px solid rgba(55,65,81,.5);
+  }
+  .check-list li:last-child { border-bottom: none; }
+  .check-list li::before {
+    content: '✓'; color: var(--green); font-weight: 800;
+    flex-shrink: 0; margin-top: 1px;
+  }
+  .check-list li span strong { color: var(--text); }
+
+  /* ── Page break ──────────────────────────────────────── */
+  .pb { page-break-before: always; padding-top: 60px; }
+
+  /* ── Footer ──────────────────────────────────────────── */
+  .footer {
+    border-top: 1px solid var(--border);
+    padding: 40px; text-align: center;
+    color: var(--muted); font-size: 12px;
+  }
+
+  @media print {
+    body { background: #fff; color: #000; }
+    .cover { background: #0B0F19 !important; }
+    pre { border: 1px solid #ddd; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     COVER PAGE
+════════════════════════════════════════════════════════════════ -->
+<div class="cover">
+  <div class="cover-badge">📋 &nbsp; Complete Project Documentation</div>
+  <h1>AccessLayer</h1>
+  <p class="cover-sub">
+    An AI-powered universal accessibility layer — automatic WCAG audits, real-time remediation,
+    AI alt text, Indic voice control, and WhatsApp scorecards for any website on earth.
+  </p>
+  <div class="cover-meta">
+    <div class="cover-meta-item"><div class="label">Version</div><div class="value">2.0</div></div>
+    <div class="cover-meta-item"><div class="label">Type</div><div class="value">Full-Stack SaaS</div></div>
+    <div class="cover-meta-item"><div class="label">Backend</div><div class="value">FastAPI + Python</div></div>
+    <div class="cover-meta-item"><div class="label">Frontend</div><div class="value">React 19</div></div>
+    <div class="cover-meta-item"><div class="label">Database</div><div class="value">Supabase / PostgreSQL</div></div>
+    <div class="cover-meta-item"><div class="label">AI</div><div class="value">Google Gemini</div></div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     TABLE OF CONTENTS
+════════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="section-label">Navigation</div>
+  <h2>Table of Contents</h2>
+  <br/>
+  <table>
+    <tr><th>#</th><th>Section</th><th>Topic</th></tr>
+    <tr><td><span class="pill pill-green">1</span></td><td><strong>What Is This Project?</strong></td><td>Project overview, mission, one-liner</td></tr>
+    <tr><td><span class="pill pill-green">2</span></td><td><strong>The Problem</strong></td><td>Web accessibility gap, legal risk, market context</td></tr>
+    <tr><td><span class="pill pill-green">3</span></td><td><strong>The Solution</strong></td><td>What AccessLayer does, core value proposition</td></tr>
+    <tr><td><span class="pill pill-green">4</span></td><td><strong>Key Features</strong></td><td>All 8 major features explained with visuals</td></tr>
+    <tr><td><span class="pill pill-green">5</span></td><td><strong>How It Works</strong></td><td>Architecture diagram, data flow, component map</td></tr>
+    <tr><td><span class="pill pill-green">6</span></td><td><strong>User Journey</strong></td><td>Step-by-step usage from sign-up to live widget</td></tr>
+    <tr><td><span class="pill pill-green">7</span></td><td><strong>Tech Stack</strong></td><td>Every technology used and why</td></tr>
+    <tr><td><span class="pill pill-green">8</span></td><td><strong>API Reference</strong></td><td>Backend routes, authentication, widget API</td></tr>
+    <tr><td><span class="pill pill-green">9</span></td><td><strong>Deployment Guide</strong></td><td>Render unified deployment — step by step</td></tr>
+    <tr><td><span class="pill pill-green">10</span></td><td><strong>Environment Variables</strong></td><td>Complete .env reference</td></tr>
+    <tr><td><span class="pill pill-green">11</span></td><td><strong>Security</strong></td><td>Auth model, SSRF protection, data safety</td></tr>
+    <tr><td><span class="pill pill-green">12</span></td><td><strong>Use Cases</strong></td><td>Who uses this and how</td></tr>
+  </table>
+</div>
+
+<hr class="divider"/>
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 1 — WHAT IS THIS PROJECT
+════════════════════════════════════════════════════════════════ -->
+<div class="page pb">
+  <div class="section-label">Section 1</div>
+  <h2>What Is AccessLayer?</h2>
+  <p style="font-size:18px; color: var(--text); font-weight:500; margin-bottom:24px;">
+    AccessLayer is a <strong>drop-in SaaS platform</strong> that makes <em>any website</em> accessible, WCAG-compliant,
+    and voice-navigable — without the site owner touching their codebase — using a single &lt;script&gt; tag and AI.
+  </p>
+
+  <!-- stat row -->
+  <div class="card-grid card-grid-4" style="margin-bottom:40px;">
+    <div class="stat-box"><div class="num">1</div><div class="lbl">Script tag to deploy</div></div>
+    <div class="stat-box"><div class="num">100</div><div class="lbl">Max accessibility score</div></div>
+    <div class="stat-box"><div class="num">12+</div><div class="lbl">WCAG rule checks</div></div>
+    <div class="stat-box"><div class="num">∞</div><div class="lbl">Sites per account</div></div>
+  </div>
+
+  <div class="card-grid card-grid-2">
+    <div class="card">
+      <h4>🎯 The One-Liner</h4>
+      <p>AccessLayer is <strong>Grammarly for web accessibility</strong> — it monitors your site continuously, tells you exactly what's broken, AI-fixes what it can, and gives visitors live assistive tools (voice, contrast, dyslexia mode) in any Indian language.</p>
+    </div>
+    <div class="card">
+      <h4>🌐 The Audience</h4>
+      <p>Built for <strong>Indian SMB website owners, developers, and agencies</strong> who need WCAG compliance for ADA / EAA / RPwD Act coverage but don't have an in-house accessibility team or budget for a $50k audit firm.</p>
+    </div>
+  </div>
+</div>
+
+<hr class="divider"/>
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 2 — THE PROBLEM
+════════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="section-label">Section 2</div>
+  <h2>The Problem</h2>
+  <p>Roughly <strong>96.3% of the top one million websites fail basic accessibility checks</strong> (WebAIM Million, 2024). This is not a niche concern — it creates real legal exposure and excludes over a billion users with disabilities worldwide.</p>
+
+  <div class="card-grid card-grid-3" style="margin:32px 0;">
+    <div class="problem-card">
+      <h4 style="color:var(--red);">⚖️ Legal Risk</h4>
+      <p style="font-size:12px;">ADA lawsuits in the US crossed 4,600/year. India's RPwD Act 2016 and the EU's European Accessibility Act (EAA) 2025 mandate digital accessibility for businesses. Non-compliance = fines and litigation.</p>
+    </div>
+    <div class="problem-card">
+      <h4 style="color:var(--red);">🧑‍💻 Developer Cost</h4>
+      <p style="font-size:12px;">Manual WCAG audits cost ₹3–15 lakh per engagement. A single audit is a snapshot — violations creep back every sprint. No small dev shop can afford continuous expert review.</p>
+    </div>
+    <div class="problem-card">
+      <h4 style="color:var(--red);">🌍 Exclusion Gap</h4>
+      <p style="font-size:12px;">India has 26.8M+ persons with disabilities. Screen-reader users, low-vision users, motor-impaired users, and non-English speakers are locked out of most Indian websites due to missing alt text, no keyboard nav, and English-only UIs.</p>
+    </div>
+  </div>
+
+  <!-- Problems list -->
+  <div class="card">
+    <h4>Top WCAG Failures Found on Indian Websites</h4>
+    <br/>
+    <table>
+      <tr><th>Issue</th><th>% of Sites Affected</th><th>Impact</th></tr>
+      <tr><td><strong>Missing alt text on images</strong></td><td><span class="pill pill-red">58%</span></td><td>Screen readers skip images entirely</td></tr>
+      <tr><td><strong>Low color contrast text</strong></td><td><span class="pill pill-red">83%</span></td><td>Low-vision users cannot read</td></tr>
+      <tr><td><strong>Missing form labels</strong></td><td><span class="pill pill-orange">46%</span></td><td>Blind users cannot fill forms</td></tr>
+      <tr><td><strong>No keyboard navigation</strong></td><td><span class="pill pill-orange">41%</span></td><td>Motor-impaired users are blocked</td></tr>
+      <tr><td><strong>Missing document language</strong></td><td><span class="pill pill-yellow">33%</span></td><td>Screen readers use wrong pronunciation</td></tr>
+      <tr><td><strong>Empty buttons / links</strong></td><td><span class="pill pill-yellow">29%</span></td><td>Assistive tech announces "button, button, button"</td></tr>
+    </table>
+  </div>
+</div>
+
+<hr class="divider"/>
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 3 — THE SOLUTION
+════════════════════════════════════════════════════════════════ -->
+<div class="page pb">
+  <div class="section-label">Section 3</div>
+  <h2>The Solution</h2>
+
+  <div class="vs-grid" style="gap:16px; margin-bottom:40px;">
+    <div class="problem-card">
+      <h4 style="color:var(--red); margin-bottom:16px;">❌ Without AccessLayer</h4>
+      <ul class="check-list" style="list-style:none;">
+        <li style="color:var(--muted);"><span style="color:var(--red);margin-right:8px;">✗</span> Hire expensive consultant for one-time audit</li>
+        <li style="color:var(--muted);"><span style="color:var(--red);margin-right:8px;">✗</span> Fix issues manually across thousands of pages</li>
+        <li style="color:var(--muted);"><span style="color:var(--red);margin-right:8px;">✗</span> Violations return with every new feature</li>
+        <li style="color:var(--muted);"><span style="color:var(--red);margin-right:8px;">✗</span> No alerts when score drops</li>
+        <li style="color:var(--muted);"><span style="color:var(--red);margin-right:8px;">✗</span> Voice control requires native app rebuild</li>
+        <li style="color:var(--muted);"><span style="color:var(--red);margin-right:8px;">✗</span> No Hindi / regional language support</li>
+      </ul>
+    </div>
+    <div class="vs-divider"><div class="vs-badge">VS</div></div>
+    <div class="solution-card">
+      <h4 style="color:var(--green); margin-bottom:16px;">✅ With AccessLayer</h4>
+      <ul class="check-list">
+        <li><span><strong>1 script tag</strong> — deploys in 60 seconds</span></li>
+        <li><span>Continuous automated WCAG audits, no consultants</span></li>
+        <li><span>AI generates alt text for every image automatically</span></li>
+        <li><span>WhatsApp + email alerts when score drops</span></li>
+        <li><span>Voice control for visitors in Hindi, Tamil, Telugu &amp; more</span></li>
+        <li><span>Live dashboard with trend charts and fix tips</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- How it solves -->
+  <div class="flow">
+    <div class="flow-step">
+      <div class="step-num">1</div>
+      <div class="step-icon">📋</div>
+      <div class="step-title">Dashboard Audit</div>
+      <div class="step-desc">Server-side WCAG + SEO scan of your URL. Score from 0–100. Full violation list with WCAG criterion.</div>
+    </div>
+    <div class="flow-step">
+      <div class="step-num">2</div>
+      <div class="step-icon">🤖</div>
+      <div class="step-title">AI Fix Tips</div>
+      <div class="step-desc">One-click Gemini AI explanation: why it matters, exact corrected HTML, WCAG reference.</div>
+    </div>
+    <div class="flow-step">
+      <div class="step-num">3</div>
+      <div class="step-icon">🔌</div>
+      <div class="step-title">Embed Widget</div>
+      <div class="step-desc">Copy 2-line script tag. Widget runs in-browser, scans live DOM, injects accessibility toolbar.</div>
+    </div>
+    <div class="flow-step">
+      <div class="step-num">4</div>
+      <div class="step-icon">📱</div>
+      <div class="step-title">Live Alerts</div>
+      <div class="step-desc">Automatic WhatsApp + email when accessibility score drops ≥5 points.</div>
+    </div>
+    <div class="flow-step">
+      <div class="step-num">5</div>
+      <div class="step-icon">🎙️</div>
+      <div class="step-title">Voice Control</div>
+      <div class="step-desc">Visitors speak in Hindi / English. Sarvam STT + Gemini understand commands, execute on page.</div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider"/>
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 4 — FEATURES
+════════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="section-label">Section 4</div>
+  <h2>Key Features</h2>
+
+  <div class="feature-row">
+    <div class="feature-icon" style="background:rgba(16,185,129,.12);">🔍</div>
+    <div>
+      <h4>WCAG Accessibility Audit Engine</h4>
+      <p>Server-side audit fetches the live HTML of any URL, runs 12+ WCAG 2.1 AA checks (missing alt, low contrast, no form labels, keyboard traps, empty buttons, lang attribute, skip links, etc.) and returns an <strong>accessibility score 0–100</strong> with per-violation impact levels (critical / serious / moderate / minor).</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <span class="pill pill-red">Critical: score −15</span>
+        <span class="pill pill-orange">Serious: score −10</span>
+        <span class="pill pill-yellow">Moderate: score −5</span>
+        <span class="pill pill-blue">Minor: score −2</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="feature-row">
+    <div class="feature-icon" style="background:rgba(59,130,246,.12);">🤖</div>
+    <div>
+      <h4>AI-Generated Alt Text (Google Gemini)</h4>
+      <p>For any image on a monitored site, the widget can call the backend which sends the image bytes to Gemini Vision and returns a concise, accurate alt-text sentence (&le;18 words). Results are <strong>cached</strong> to avoid repeat API calls. The widget injects the generated alt into the live DOM without changing the original site's code.</p>
+    </div>
+  </div>
+
+  <div class="feature-row">
+    <div class="feature-icon" style="background:rgba(139,92,246,.12);">🎙️</div>
+    <div>
+      <h4>Indic Voice Control (Sarvam AI + Gemini)</h4>
+      <p>The embedded widget captures microphone input, sends audio to <strong>Sarvam AI</strong> for speech-to-text in Hindi, Tamil, Telugu, Kannada, Malayalam, Bengali, Marathi, and Hinglish. The transcript goes to Gemini which maps the intent to one of: CLICK, FILL_FORM, SCROLL, READ_TEXT, GO_BACK, SET_MODE. The widget executes the action on the live DOM.</p>
+      <div class="card" style="margin-top:12px; padding:12px 16px;">
+        <code style="color:var(--green);">"संपर्क बटन दबाओ"  →  CLICK #contact-button</code><br/>
+        <code style="color:var(--green);">"scroll down"  →  SCROLL direction:down</code><br/>
+        <code style="color:var(--green);">"high contrast on"  →  SET_MODE contrast</code>
+      </div>
+    </div>
+  </div>
+
+  <div class="feature-row">
+    <div class="feature-icon" style="background:rgba(245,158,11,.12);">⚙️</div>
+    <div>
+      <h4>In-Browser Accessibility Toolbar (widget.js)</h4>
+      <p>A floating toolbar injected into visitor's browser by the widget script. Controls include:</p>
+      <div class="card-grid card-grid-3" style="margin-top:10px;">
+        <div class="card" style="padding:12px; font-size:12px; text-align:center;">
+          <div style="font-size:20px; margin-bottom:6px;">🔲</div>
+          <strong>High Contrast</strong><br/><span style="color:var(--muted);">Inverts colors for low-vision users</span>
+        </div>
+        <div class="card" style="padding:12px; font-size:12px; text-align:center;">
+          <div style="font-size:20px; margin-bottom:6px;">🔤</div>
+          <strong>Dyslexia Font</strong><br/><span style="color:var(--muted);">Switches to OpenDyslexic font</span>
+        </div>
+        <div class="card" style="padding:12px; font-size:12px; text-align:center;">
+          <div style="font-size:20px; margin-bottom:6px;">🔊</div>
+          <strong>Read Aloud</strong><br/><span style="color:var(--muted);">TTS reads selected/page text</span>
+        </div>
+        <div class="card" style="padding:12px; font-size:12px; text-align:center;">
+          <div style="font-size:20px; margin-bottom:6px;">🔎</div>
+          <strong>Bigger Text</strong><br/><span style="color:var(--muted);">+2 font-size steps globally</span>
+        </div>
+        <div class="card" style="padding:12px; font-size:12px; text-align:center;">
+          <div style="font-size:20px; margin-bottom:6px;">🎯</div>
+          <strong>Focus Highlight</strong><br/><span style="color:var(--muted);">Visible keyboard focus ring</span>
+        </div>
+        <div class="card" style="padding:12px; font-size:12px; text-align:center;">
+          <div style="font-size:20px; margin-bottom:6px;">🎙</div>
+          <strong>Voice Nav</strong><br/><span style="color:var(--muted);">Hindi/English voice commands</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="feature-row">
+    <div class="feature-icon" style="background:rgba(249,115,22,.12);">📊</div>
+    <div>
+      <h4>Dashboard — Sites, Audits, Trend Charts</h4>
+      <p>Authenticated dashboard shows all monitored sites with their latest accessibility score, SEO score, total audits run, and a trend sparkline. Per-site detail view shows full audit history, violation breakdown by severity, shareable public report links, and the embed code snippet.</p>
+    </div>
+  </div>
+
+  <div class="feature-row">
+    <div class="feature-icon" style="background:rgba(16,185,129,.12);">🔔</div>
+    <div>
+      <h4>WhatsApp + Email Alerts</h4>
+      <p>If accessibility score drops ≥5 points vs the previous audit, the system automatically fires a <strong>WhatsApp message</strong> (via Fast2SMS) and/or an <strong>email scorecard</strong> (via Emergent Email API) to the site owner. The WhatsApp bot also acts as an interactive concierge — owners can message their site URL to get an instant audit and fix tips via Gemini AI.</p>
+    </div>
+  </div>
+
+  <div class="feature-row">
+    <div class="feature-icon" style="background:rgba(59,130,246,.12);">🔒</div>
+    <div>
+      <h4>Authentication — Clerk</h4>
+      <p>Secure sign-in/sign-up with Clerk, a managed auth SaaS. Supports email/password, Google OAuth, and magic links. The backend verifies Clerk JWTs (RS256) on every protected endpoint. In production, Clerk's Frontend API is proxied through the same domain to avoid third-party cookie issues.</p>
+    </div>
+  </div>
+
+  <div class="feature-row" style="border-bottom:none;">
+    <div class="feature-icon" style="background:rgba(139,92,246,.12);">🌐</div>
+    <div>
+      <h4>SEO Audit</h4>
+      <p>Alongside accessibility, every server-side audit also checks: title tag, meta description, canonical URL, Open Graph tags, H1 presence, robots.txt, sitemap.xml, page speed signals, mobile viewport, and structured data. Returns an SEO score 0–100 alongside the a11y score.</p>
+    </div>
+  </div>
+</div>
+
+<hr class="divider"/>
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 5 — ARCHITECTURE
+════════════════════════════════════════════════════════════════ -->
+<div class="page pb">
+  <div class="section-label">Section 5</div>
+  <h2>How It Works — Architecture</h2>
+
+  <div class="arch">
+    <!-- Layer 1: User types -->
+    <div class="arch-section-title">ACTORS</div>
+    <div class="arch-row" style="gap:16px; margin-bottom:20px;">
+      <div class="arch-box" style="border-color:var(--green);">
+        <div class="icon">👤</div>
+        <div class="title">Site Owner</div>
+        <div class="sub">Signs in · Manages sites · Views dashboard</div>
+      </div>
+      <div class="arch-box" style="border-color:var(--blue);">
+        <div class="icon">🌐</div>
+        <div class="title">Website Visitor</div>
+        <div class="sub">Uses the injected accessibility widget</div>
+      </div>
+      <div class="arch-box" style="border-color:var(--purple);">
+        <div class="icon">🤖</div>
+        <div class="title">WhatsApp Bot</div>
+        <div class="sub">Fast2SMS webhook → AI concierge</div>
+      </div>
+    </div>
+
+    <div style="text-align:center;color:var(--green);font-size:18px;margin:4px 0 20px;">↕  HTTPS  ↕</div>
+
+    <!-- Layer 2: Single server -->
+    <div class="arch-group">
+      <div class="arch-group-label">🚀 Single Render Web Service (FastAPI + React)</div>
+      <div class="arch-row" style="gap:12px; flex-wrap:wrap; justify-content:center;">
+        <div class="arch-box" style="border-color:var(--green); background:rgba(16,185,129,.07);">
+          <div class="icon">⚛️</div>
+          <div class="title">React SPA</div>
+          <div class="sub">Served from /static/frontend<br/>via FastAPI catch-all</div>
+        </div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-box" style="border-color:var(--blue);">
+          <div class="icon">⚡</div>
+          <div class="title">FastAPI /api/*</div>
+          <div class="sub">All REST endpoints<br/>+ Clerk proxy relay</div>
+        </div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-box" style="border-color:var(--orange);">
+          <div class="icon">📦</div>
+          <div class="title">widget.js</div>
+          <div class="sub">Served at /api/widget.js<br/>CDN-cacheable</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="text-align:center;color:var(--green);font-size:18px;margin:4px 0 20px;">↕  API calls  ↕</div>
+
+    <!-- Layer 3: External services -->
+    <div class="arch-group">
+      <div class="arch-group-label">☁️ External Cloud Services</div>
+      <div class="arch-row" style="gap:12px; flex-wrap:wrap; justify-content:center;">
+        <div class="arch-box">
+          <div class="icon">🐘</div>
+          <div class="title">Supabase</div>
+          <div class="sub">PostgreSQL database<br/>asyncpg pool</div>
+        </div>
+        <div class="arch-box">
+          <div class="icon">🔐</div>
+          <div class="title">Clerk</div>
+          <div class="sub">Auth / JWT<br/>Sign-in UI</div>
+        </div>
+        <div class="arch-box">
+          <div class="icon">✨</div>
+          <div class="title">Gemini AI</div>
+          <div class="sub">Alt text · Fix tips<br/>Voice commands</div>
+        </div>
+        <div class="arch-box">
+          <div class="icon">🗣️</div>
+          <div class="title">Sarvam AI</div>
+          <div class="sub">Indic STT &amp; TTS<br/>12 languages</div>
+        </div>
+        <div class="arch-box">
+          <div class="icon">📱</div>
+          <div class="title">Fast2SMS</div>
+          <div class="sub">WhatsApp alerts<br/>Bot webhook</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <br/>
+
+  <!-- Data flow -->
+  <h3>Data Flow — Server-Side Audit</h3>
+  <div class="flow">
+    <div class="flow-step">
+      <div class="step-num">1</div>
+      <div class="step-icon">🖱️</div>
+      <div class="step-title">User clicks "Run Audit"</div>
+      <div class="step-desc">Dashboard sends POST /api/sites/{id}/audit with Clerk JWT</div>
+    </div>
+    <div class="flow-step">
+      <div class="step-num">2</div>
+      <div class="step-icon">🔍</div>
+      <div class="step-title">Audit Engine fetches URL</div>
+      <div class="step-desc">httpx GET with SSRF protection, BeautifulSoup parses HTML</div>
+    </div>
+    <div class="flow-step">
+      <div class="step-num">3</div>
+      <div class="step-icon">⚖️</div>
+      <div class="step-title">Rules Engine runs</div>
+      <div class="step-desc">12 WCAG checks + SEO checks → score + violations list</div>
+    </div>
+    <div class="flow-step">
+      <div class="step-num">4</div>
+      <div class="step-icon">💾</div>
+      <div class="step-title">Audit saved to DB</div>
+      <div class="step-desc">asyncpg INSERT into al_audits on Supabase</div>
+    </div>
+    <div class="flow-step">
+      <div class="step-num">5</div>
+      <div class="step-icon">📊</div>
+      <div class="step-title">Dashboard updates</div>
+      <div class="step-desc">Score ring, violation list, trend chart shown</div>
+    </div>
+    <div class="flow-step">
+      <div class="step-num">6</div>
+      <div class="step-icon">🔔</div>
+      <div class="step-title">Alert check</div>
+      <div class="step-desc">Background task: if score dropped ≥5 pts → WhatsApp + email</div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider"/>
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 6 — USER JOURNEY
+════════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="section-label">Section 6</div>
+  <h2>User Journey</h2>
+
+  <div class="card" style="margin-bottom:24px;">
+    <div style="display:flex; gap:0; overflow:hidden; border-radius:10px; border:1px solid var(--border);">
+      <div style="flex:1; padding:20px; text-align:center; background:rgba(16,185,129,.06); border-right:1px solid var(--border);">
+        <div style="font-size:28px; margin-bottom:8px;">🏠</div>
+        <strong style="font-size:13px; display:block;">Landing Page</strong>
+        <p style="font-size:11px; margin:8px 0 0;">Enter any URL → free public audit → score + report. No account needed.</p>
+      </div>
+      <div style="display:flex;align-items:center;padding:0 4px;color:var(--green);">→</div>
+      <div style="flex:1; padding:20px; text-align:center; background:rgba(59,130,246,.05); border-right:1px solid var(--border);">
+        <div style="font-size:28px; margin-bottom:8px;">📝</div>
+        <strong style="font-size:13px; display:block;">Sign Up</strong>
+        <p style="font-size:11px; margin:8px 0 0;">Clerk email/Google. Auto-redirect to dashboard.</p>
+      </div>
+      <div style="display:flex;align-items:center;padding:0 4px;color:var(--green);">→</div>
+      <div style="flex:1; padding:20px; text-align:center; background:rgba(139,92,246,.05); border-right:1px solid var(--border);">
+        <div style="font-size:28px; margin-bottom:8px;">➕</div>
+        <strong style="font-size:13px; display:block;">Add Site</strong>
+        <p style="font-size:11px; margin:8px 0 0;">Enter site name, URL, optional WhatsApp + email for alerts.</p>
+      </div>
+      <div style="display:flex;align-items:center;padding:0 4px;color:var(--green);">→</div>
+      <div style="flex:1; padding:20px; text-align:center; background:rgba(245,158,11,.05); border-right:1px solid var(--border);">
+        <div style="font-size:28px; margin-bottom:8px;">🔍</div>
+        <strong style="font-size:13px; display:block;">Run Audit</strong>
+        <p style="font-size:11px; margin:8px 0 0;">One click → full WCAG + SEO report in seconds.</p>
+      </div>
+      <div style="display:flex;align-items:center;padding:0 4px;color:var(--green);">→</div>
+      <div style="flex:1; padding:20px; text-align:center; background:rgba(16,185,129,.06);">
+        <div style="font-size:28px; margin-bottom:8px;">🔌</div>
+        <strong style="font-size:13px; display:block;">Embed Widget</strong>
+        <p style="font-size:11px; margin:8px 0 0;">Copy &lt;script&gt; tag → paste into site &lt;head&gt; → live toolbar for all visitors.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Embed snippet visual -->
+  <h3>Embed Code — What Site Owners Copy</h3>
+  <pre>
+<span class="token-muted">&lt;!-- AccessLayer: paste into your website &lt;head&gt; --&gt;</span>
+<span class="token-blue">&lt;script</span> <span class="token-green">src</span>=<span class="token-yellow">"https://your-app.onrender.com/api/widget.js"</span>
+  <span class="token-green">data-site-id</span>=<span class="token-yellow">"site_abc123xyz"</span>
+  <span class="token-green">data-autofix</span>=<span class="token-yellow">"true"</span>
+  <span class="token-green">data-sarvam-voice</span>=<span class="token-yellow">"enabled"</span>
+  <span class="token-blue">async</span><span class="token-blue">&gt;&lt;/script&gt;</span>
+  </pre>
+
+  <p style="font-size:12px; color:var(--muted);">Once this tag is live on the site, the widget runs on every page load: scans the live DOM with axe-core rules, reports violations back to AccessLayer, injects the accessibility toolbar, and enables voice navigation for all visitors.</p>
+</div>
+
+<hr class="divider"/>
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 7 — TECH STACK
+════════════════════════════════════════════════════════════════ -->
+<div class="page pb">
+  <div class="section-label">Section 7</div>
+  <h2>Tech Stack</h2>
+
+  <div class="card-grid card-grid-2" style="margin-bottom:24px;">
+    <div class="card">
+      <h4 style="margin-bottom:16px;">⚛️ Frontend</h4>
+      <table>
+        <tr><td><strong>React 19</strong></td><td><span class="pill pill-green">Core framework</span></td></tr>
+        <tr><td><strong>CRACO</strong></td><td><span class="pill pill-blue">CRA override / Webpack</span></td></tr>
+        <tr><td><strong>Tailwind CSS 3</strong></td><td><span class="pill pill-blue">Styling</span></td></tr>
+        <tr><td><strong>Radix UI + shadcn</strong></td><td><span class="pill pill-blue">Components</span></td></tr>
+        <tr><td><strong>React Router 7</strong></td><td><span class="pill pill-blue">Client routing</span></td></tr>
+        <tr><td><strong>@clerk/react</strong></td><td><span class="pill pill-purple">Authentication UI</span></td></tr>
+        <tr><td><strong>TanStack Query</strong></td><td><span class="pill pill-blue">Server state</span></td></tr>
+        <tr><td><strong>Recharts</strong></td><td><span class="pill pill-blue">Trend charts</span></td></tr>
+        <tr><td><strong>Framer Motion</strong></td><td><span class="pill pill-blue">Animations</span></td></tr>
+        <tr><td><strong>Axios</strong></td><td><span class="pill pill-blue">HTTP client</span></td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h4 style="margin-bottom:16px;">🐍 Backend</h4>
+      <table>
+        <tr><td><strong>FastAPI 0.110</strong></td><td><span class="pill pill-green">REST API framework</span></td></tr>
+        <tr><td><strong>Uvicorn</strong></td><td><span class="pill pill-green">ASGI server</span></td></tr>
+        <tr><td><strong>asyncpg</strong></td><td><span class="pill pill-blue">Async PostgreSQL driver</span></td></tr>
+        <tr><td><strong>httpx</strong></td><td><span class="pill pill-blue">Async HTTP client</span></td></tr>
+        <tr><td><strong>BeautifulSoup4 + lxml</strong></td><td><span class="pill pill-blue">HTML parsing</span></td></tr>
+        <tr><td><strong>google-genai</strong></td><td><span class="pill pill-purple">Gemini AI SDK</span></td></tr>
+        <tr><td><strong>PyJWT</strong></td><td><span class="pill pill-orange">Clerk JWT verification</span></td></tr>
+        <tr><td><strong>pydantic 2</strong></td><td><span class="pill pill-blue">Data validation</span></td></tr>
+        <tr><td><strong>python-dotenv</strong></td><td><span class="pill pill-blue">Env management</span></td></tr>
+        <tr><td><strong>Stripe, Boto3, Motor</strong></td><td><span class="pill pill-yellow">Payments / S3 / MongoDB</span></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="card-grid card-grid-3">
+    <div class="card" style="text-align:center; padding:24px 16px;">
+      <div style="font-size:32px; margin-bottom:12px;">🐘</div>
+      <strong>Supabase</strong>
+      <p style="font-size:12px; margin-top:8px;">Managed PostgreSQL. 4 tables: sites, audits, alt_cache, wa_log. Auto-schema on startup.</p>
+    </div>
+    <div class="card" style="text-align:center; padding:24px 16px;">
+      <div style="font-size:32px; margin-bottom:12px;">🔐</div>
+      <strong>Clerk Auth</strong>
+      <p style="font-size:12px; margin-top:8px;">Managed auth SaaS. Frontend SDK + backend JWT verification. Production proxy through same domain.</p>
+    </div>
+    <div class="card" style="text-align:center; padding:24px 16px;">
+      <div style="font-size:32px; margin-bottom:12px;">✨</div>
+      <strong>Google Gemini</strong>
+      <p style="font-size:12px; margin-top:8px;">gemini-3.5-flash-lite for alt text (vision), fix tips (text), voice command parsing, WhatsApp concierge.</p>
+    </div>
+  </div>
+</div>
+
+<hr class="divider"/>
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 8 — API REFERENCE
+════════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="section-label">Section 8</div>
+  <h2>API Reference</h2>
+  <p>Base URL: <code style="color:var(--green);">https://your-app.onrender.com/api</code></p>
+
+  <h3 style="margin-top:24px;">Public Endpoints (no auth)</h3>
+  <table>
+    <tr><th>Method</th><th>Path</th><th>Description</th></tr>
+    <tr><td><span class="pill pill-green">GET</span></td><td><code>/</code></td><td>Health check — returns service status</td></tr>
+    <tr><td><span class="pill pill-green">GET</span></td><td><code>/integrations/status</code></td><td>Shows which integrations are configured</td></tr>
+    <tr><td><span class="pill pill-blue">POST</span></td><td><code>/public/scan</code></td><td>Free one-shot WCAG + SEO audit of any URL</td></tr>
+    <tr><td><span class="pill pill-green">GET</span></td><td><code>/reports/{id}</code></td><td>Fetch a saved audit report (public share link)</td></tr>
+    <tr><td><span class="pill pill-green">GET</span></td><td><code>/widget.js</code></td><td>The embeddable widget script (JS)</td></tr>
+    <tr><td><span class="pill pill-green">GET</span></td><td><code>/clerk/config</code></td><td>Returns Clerk publishable key to frontend</td></tr>
+  </table>
+
+  <h3 style="margin-top:24px;">Widget Endpoints (site_id key, no user auth)</h3>
+  <table>
+    <tr><th>Method</th><th>Path</th><th>Description</th></tr>
+    <tr><td><span class="pill pill-green">GET</span></td><td><code>/widget/{site_id}/config</code></td><td>Widget feature flags for this site</td></tr>
+    <tr><td><span class="pill pill-blue">POST</span></td><td><code>/widget/{site_id}/report</code></td><td>Submit in-browser axe scan results</td></tr>
+    <tr><td><span class="pill pill-blue">POST</span></td><td><code>/widget/{site_id}/alt</code></td><td>Generate AI alt text for an image URL</td></tr>
+    <tr><td><span class="pill pill-blue">POST</span></td><td><code>/widget/{site_id}/tts</code></td><td>Text-to-speech via Sarvam AI</td></tr>
+    <tr><td><span class="pill pill-blue">POST</span></td><td><code>/widget/{site_id}/voice</code></td><td>Upload audio file → STT → voice command</td></tr>
+    <tr><td><span class="pill pill-blue">POST</span></td><td><code>/widget/{site_id}/command</code></td><td>Text transcript → parsed voice command</td></tr>
+  </table>
+
+  <h3 style="margin-top:24px;">Dashboard Endpoints (Clerk JWT required)</h3>
+  <table>
+    <tr><th>Method</th><th>Path</th><th>Description</th></tr>
+    <tr><td><span class="pill pill-green">GET</span></td><td><code>/me</code></td><td>Current user identity</td></tr>
+    <tr><td><span class="pill pill-green">GET</span></td><td><code>/sites</code></td><td>List all sites for current user</td></tr>
+    <tr><td><span class="pill pill-blue">POST</span></td><td><code>/sites</code></td><td>Create a new monitored site</td></tr>
+    <tr><td><span class="pill pill-green">GET</span></td><td><code>/sites/{id}</code></td><td>Get site details</td></tr>
+    <tr><td><span class="pill pill-yellow">PATCH</span></td><td><code>/sites/{id}</code></td><td>Update site settings (name, alerts, autofix, etc.)</td></tr>
+    <tr><td><span class="pill pill-red">DELETE</span></td><td><code>/sites/{id}</code></td><td>Delete site and all its audits</td></tr>
+    <tr><td><span class="pill pill-blue">POST</span></td><td><code>/sites/{id}/audit</code></td><td>Trigger a fresh server-side audit</td></tr>
+    <tr><td><span class="pill pill-green">GET</span></td><td><code>/sites/{id}/audits</code></td><td>List last 50 audits for a site</td></tr>
+    <tr><td><span class="pill pill-blue">POST</span></td><td><code>/audits/{id}/fix</code></td><td>Get AI fix tip for one violation</td></tr>
+    <tr><td><span class="pill pill-blue">POST</span></td><td><code>/audits/{id}/send-email</code></td><td>Email scorecard to site's alert email</td></tr>
+    <tr><td><span class="pill pill-blue">POST</span></td><td><code>/audits/{id}/send-whatsapp</code></td><td>WhatsApp summary to site's phone</td></tr>
+    <tr><td><span class="pill pill-green">GET</span></td><td><code>/stats/overview</code></td><td>Totals: sites, audits, avg score, open criticals, trend</td></tr>
+  </table>
+
+  <h3 style="margin-top:24px;">Authentication</h3>
+  <p>Send the Clerk session token in the <code>Authorization</code> header:</p>
+  <pre>
+<span class="token-blue">Authorization:</span> <span class="token-yellow">Bearer &lt;clerk_session_token&gt;</span>
+  </pre>
+</div>
+
+<hr class="divider"/>
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 9 — DEPLOYMENT GUIDE
+════════════════════════════════════════════════════════════════ -->
+<div class="page pb">
+  <div class="section-label">Section 9</div>
+  <h2>Deployment Guide — Render (Unified)</h2>
+  <p>This project is configured for a <strong>single Render Web Service</strong> that hosts both the React frontend and the FastAPI backend. No separate services needed. The build script compiles React and places the output inside the backend's static folder; FastAPI then serves it from the same process.</p>
+
+  <div class="flow" style="margin-bottom:32px;">
+    <div class="flow-step">
+      <div class="step-num">1</div>
+      <div class="step-icon">🐙</div>
+      <div class="step-title">Push to GitHub</div>
+      <div class="step-desc">All files including render.yaml and build_frontend.sh at the repo root</div>
+    </div>
+    <div class="flow-step">
+      <div class="step-num">2</div>
+      <div class="step-icon">🚀</div>
+      <div class="step-title">New Web Service</div>
+      <div class="step-desc">render.com → New → Web Service → connect GitHub repo</div>
+    </div>
+    <div class="flow-step">
+      <div class="step-num">3</div>
+      <div class="step-icon">⚙️</div>
+      <div class="step-title">Configure Service</div>
+      <div class="step-desc">Render auto-reads render.yaml OR set manually (see below)</div>
+    </div>
+    <div class="flow-step">
+      <div class="step-num">4</div>
+      <div class="step-icon">🔑</div>
+      <div class="step-title">Set Env Vars</div>
+      <div class="step-desc">Add all secrets from backend/.env in Render dashboard → Environment</div>
+    </div>
+    <div class="flow-step">
+      <div class="step-num">5</div>
+      <div class="step-icon">✅</div>
+      <div class="step-title">Deploy</div>
+      <div class="step-desc">Render builds → assigns URL → you're live!</div>
+    </div>
+  </div>
+
+  <h3>Manual Render Settings (if not using render.yaml)</h3>
+  <table>
+    <tr><th>Setting</th><th>Value</th></tr>
+    <tr><td><strong>Runtime</strong></td><td>Python 3</td></tr>
+    <tr><td><strong>Build Command</strong></td><td><code>bash build_frontend.sh &amp;&amp; pip install -r backend/requirements.txt</code></td></tr>
+    <tr><td><strong>Start Command</strong></td><td><code>uvicorn server:app --host 0.0.0.0 --port $PORT --workers 2</code></td></tr>
+    <tr><td><strong>PYTHONPATH</strong></td><td><code>backend</code></td></tr>
+    <tr><td><strong>Root Directory</strong></td><td><em>(leave blank — project root)</em></td></tr>
+  </table>
+
+  <h3 style="margin-top:24px;">How the Single-Server Setup Works</h3>
+  <div class="card">
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px; align-items:start;">
+      <div>
+        <h4>Build Time</h4>
+        <ol style="padding-left:20px; color:var(--muted); font-size:13px; line-height:2;">
+          <li>Render runs <code>build_frontend.sh</code></li>
+          <li>Script installs Node 20 via nvm</li>
+          <li>Runs <code>npm run build</code> in <code>frontend/</code></li>
+          <li>Copies <code>frontend/build/</code> → <code>backend/static/frontend/</code></li>
+          <li>Renders installs Python deps via pip</li>
+        </ol>
+      </div>
+      <div>
+        <h4>Runtime (Request Routing)</h4>
+        <ol style="padding-left:20px; color:var(--muted); font-size:13px; line-height:2;">
+          <li><code>/api/*</code> → FastAPI routes (JSON)</li>
+          <li><code>/static/*</code> → React's hashed JS/CSS assets</li>
+          <li><code>/favicon.ico</code> etc → exact file match</li>
+          <li>Everything else → <code>index.html</code> (SPA routing)</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <br/>
+  <div class="solution-card">
+    <h4 style="color:var(--green);">💡 Important: Update Clerk Dashboard</h4>
+    <p style="margin-top:8px; font-size:13px;">After deployment, go to <strong>dashboard.clerk.com → Your App → Settings → Domains</strong> and add your Render URL (e.g. <code>https://accesslayer.onrender.com</code>) as an allowed origin. Without this, sign-in will fail.</p>
+  </div>
+</div>
+
+<hr class="divider"/>
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 10 — ENVIRONMENT VARIABLES
+════════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="section-label">Section 10</div>
+  <h2>Environment Variables</h2>
+  <p>All secrets live in <code>backend/.env</code> locally and in the Render Environment dashboard in production.</p>
+
+  <table>
+    <tr><th>Variable</th><th>Required</th><th>Description</th><th>Where to Get</th></tr>
+    <tr>
+      <td><code>SUPABASE_DB_URL</code></td>
+      <td><span class="pill pill-red">Yes</span></td>
+      <td>PostgreSQL connection string</td>
+      <td>Supabase → Project → Settings → Database → Connection string (URI mode)</td>
+    </tr>
+    <tr>
+      <td><code>SUPABASE_POOLER_HOST</code></td>
+      <td><span class="pill pill-yellow">Recommended</span></td>
+      <td>PgBouncer pooler host for serverless connections</td>
+      <td>Supabase → Settings → Database → Connection Pooling</td>
+    </tr>
+    <tr>
+      <td><code>CLERK_PUBLISHABLE_KEY</code></td>
+      <td><span class="pill pill-red">Yes</span></td>
+      <td>Public Clerk key (starts with <code>pk_live_</code> or <code>pk_test_</code>)</td>
+      <td>dashboard.clerk.com → API Keys</td>
+    </tr>
+    <tr>
+      <td><code>CLERK_SECRET_KEY</code></td>
+      <td><span class="pill pill-red">Yes</span></td>
+      <td>Secret Clerk key for JWT verification</td>
+      <td>dashboard.clerk.com → API Keys</td>
+    </tr>
+    <tr>
+      <td><code>GEMINI_API_KEY</code></td>
+      <td><span class="pill pill-red">Yes</span></td>
+      <td>Google Gemini API key</td>
+      <td>aistudio.google.com → Get API Key</td>
+    </tr>
+    <tr>
+      <td><code>GEMINI_MODEL</code></td>
+      <td><span class="pill pill-blue">Optional</span></td>
+      <td>Gemini model name (default: gemini-3.5-flash-lite)</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td><code>SARVAM_API_KEY</code></td>
+      <td><span class="pill pill-yellow">For voice</span></td>
+      <td>Sarvam AI key for Indic STT + TTS</td>
+      <td>dashboard.sarvam.ai</td>
+    </tr>
+    <tr>
+      <td><code>FAST2SMS_API_KEY</code></td>
+      <td><span class="pill pill-yellow">For WhatsApp</span></td>
+      <td>Fast2SMS API key for WhatsApp messaging</td>
+      <td>fast2sms.com → API</td>
+    </tr>
+    <tr>
+      <td><code>FAST2SMS_PHONE_NUMBER_ID</code></td>
+      <td><span class="pill pill-yellow">For WhatsApp</span></td>
+      <td>Fast2SMS phone number ID</td>
+      <td>fast2sms.com dashboard</td>
+    </tr>
+    <tr>
+      <td><code>EMERGENT_EMAIL_KEY</code></td>
+      <td><span class="pill pill-yellow">For email</span></td>
+      <td>EmergentAgent transactional email key</td>
+      <td>emergentagent.com</td>
+    </tr>
+    <tr>
+      <td><code>EMAIL_FROM_NAME</code></td>
+      <td><span class="pill pill-blue">Optional</span></td>
+      <td>Sender name on emails (default: AccessLayer)</td>
+      <td>—</td>
+    </tr>
+  </table>
+</div>
+
+<hr class="divider"/>
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 11 — SECURITY
+════════════════════════════════════════════════════════════════ -->
+<div class="page pb">
+  <div class="section-label">Section 11</div>
+  <h2>Security Model</h2>
+
+  <div class="card-grid card-grid-2">
+    <div class="card">
+      <h4>🔒 Authentication</h4>
+      <ul class="check-list">
+        <li><span>Clerk JWTs signed RS256, verified server-side on every request</span></li>
+        <li><span>No session cookies — stateless Bearer token auth</span></li>
+        <li><span>All dashboard routes require <code>require_user</code> FastAPI dependency</span></li>
+        <li><span>Site ownership checked on every mutation (user_id match)</span></li>
+        <li><span>Widget endpoints use site_id as a shared key (no user auth)</span></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>🛡️ SSRF Protection</h4>
+      <ul class="check-list">
+        <li><span>Audit engine resolves DNS before making HTTP requests</span></li>
+        <li><span>Rejects private IPs: 10.x, 192.168.x, 172.16–31.x, 127.x, ::1</span></li>
+        <li><span>Rejects link-local: 169.254.x</span></li>
+        <li><span>URL must resolve to a public routable address</span></li>
+        <li><span>Request timeout: 30s; max response size enforced</span></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>📋 Widget Origin Check</h4>
+      <ul class="check-list">
+        <li><span>Widget <code>/report</code> endpoint validates request Origin vs registered site URL</span></li>
+        <li><span>Hostname matching (strips www.) prevents other sites from submitting fake reports</span></li>
+        <li><span>Demo site bypasses origin check for public testing</span></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>🔐 Data Safety</h4>
+      <ul class="check-list">
+        <li><span>No PII stored beyond Clerk user_id (opaque ID)</span></li>
+        <li><span>Audit data stored per user, not publicly accessible without audit_id</span></li>
+        <li><span>Alt text cache keyed by SHA-256 of image URL, not user</span></li>
+        <li><span>All DB queries use parameterized asyncpg statements (no SQL injection)</span></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<hr class="divider"/>
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 12 — USE CASES
+════════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="section-label">Section 12</div>
+  <h2>Use Cases</h2>
+
+  <div class="card-grid card-grid-2">
+    <div class="card">
+      <h4>🏪 Indian SMB — E-commerce Store</h4>
+      <p style="font-size:13px;"><strong>Problem:</strong> A Shopify/WooCommerce store has 200+ product images with no alt text, fails keyboard navigation, has poor contrast. They get flagged in an accessibility audit and risk RPwD Act penalties.</p>
+      <p style="font-size:13px;"><strong>Solution:</strong> Add AccessLayer widget. AI auto-generates alt text for all images. Dashboard shows exact violations with fix tips. Score jumps from 34 → 91 within a day.</p>
+    </div>
+    <div class="card">
+      <h4>🏥 Healthcare Portal</h4>
+      <p style="font-size:13px;"><strong>Problem:</strong> A hospital website serves elderly patients, many with visual impairments. Navigation is complex, fonts are small, no voice navigation.</p>
+      <p style="font-size:13px;"><strong>Solution:</strong> Widget adds dyslexia mode, large-text toggle, and voice navigation ("Show me appointment booking") in Hindi. WCAG compliance achieved without rewriting any hospital code.</p>
+    </div>
+    <div class="card">
+      <h4>🏛️ Government / NGO Website</h4>
+      <p style="font-size:13px;"><strong>Problem:</strong> Government portal must comply with GIGW (Guidelines for Indian Government Websites). Manual audits are expensive and infrequent.</p>
+      <p style="font-size:13px;"><strong>Solution:</strong> Continuous automated audits catch regressions after every content update. WhatsApp alerts notify the webmaster immediately when score drops. Shareable public report links provide audit evidence.</p>
+    </div>
+    <div class="card">
+      <h4>💻 Web Agency / Freelancer</h4>
+      <p style="font-size:13px;"><strong>Problem:</strong> A developer builds 20+ client websites and can't afford to manually audit each one for accessibility. Clients ask "are we WCAG compliant?"</p>
+      <p style="font-size:13px;"><strong>Solution:</strong> Add all client sites to one AccessLayer account. Dashboard shows all scores at a glance. Email the client a branded scorecard in one click. Offer "accessibility monitoring" as a monthly retainer add-on.</p>
+    </div>
+  </div>
+
+  <br/>
+  <div class="card" style="background: linear-gradient(135deg, rgba(16,185,129,.08) 0%, rgba(59,130,246,.05) 100%); border-color: rgba(16,185,129,.3);">
+    <h3 style="color:var(--green);">📈 Market Opportunity</h3>
+    <div class="card-grid card-grid-3" style="margin-top:16px;">
+      <div class="stat-box" style="background:transparent; border: 1px solid rgba(16,185,129,.2);">
+        <div class="num" style="font-size:28px;">2M+</div>
+        <div class="lbl">Active Indian business websites</div>
+      </div>
+      <div class="stat-box" style="background:transparent; border: 1px solid rgba(16,185,129,.2);">
+        <div class="num" style="font-size:28px;">96%</div>
+        <div class="lbl">Fail basic WCAG checks</div>
+      </div>
+      <div class="stat-box" style="background:transparent; border: 1px solid rgba(16,185,129,.2);">
+        <div class="num" style="font-size:28px;">2025</div>
+        <div class="lbl">EAA enforcement begins in EU</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     FOOTER
+════════════════════════════════════════════════════════════════ -->
+<div class="footer">
+  <p><strong style="color:var(--text);">AccessLayer</strong> — Universal Accessibility Layer</p>
+  <p style="margin-top:8px;">Built with FastAPI · React · Google Gemini · Sarvam AI · Supabase · Clerk</p>
+  <p style="margin-top:8px; color: var(--border);">Generated October 2026 &nbsp;|&nbsp; v2.0 &nbsp;|&nbsp; Confidential &amp; Proprietary</p>
+</div>
+
+</body>
+</html>

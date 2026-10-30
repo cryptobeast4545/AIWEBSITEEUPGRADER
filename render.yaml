@@ -1,0 +1,57 @@
+##############################################################
+#  render.yaml  –  Single-service unified deployment on Render
+#  One web service runs FastAPI which also serves the React SPA
+##############################################################
+services:
+  - type: web
+    name: accesslayer
+    runtime: python
+    region: oregon          # change to: frankfurt / singapore / ohio as needed
+    plan: free              # or: starter / standard / pro
+    rootDir: .              # project root (not backend/)
+
+    # ── Build: compile React first, then install Python deps ─────────────────
+    buildCommand: |
+      bash build_frontend.sh &&
+      pip install -r backend/requirements.txt
+
+    # ── Start: run Uvicorn from the backend directory ────────────────────────
+    startCommand: >-
+      uvicorn server:app
+      --host 0.0.0.0
+      --port $PORT
+      --workers 2
+
+    # working directory for the start command
+    envVars:
+      - key: PYTHONPATH
+        value: backend
+
+      # ── Secrets: fill these in Render → Environment ──────────────────────
+      # Copy every key from backend/.env into the Render dashboard.
+      # The entries below are placeholders – Render replaces them with real values.
+      - key: SUPABASE_DB_URL
+        sync: false          # set manually in dashboard
+      - key: SUPABASE_POOLER_HOST
+        sync: false
+      - key: CLERK_PUBLISHABLE_KEY
+        sync: false
+      - key: CLERK_SECRET_KEY
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GEMINI_MODEL
+        value: gemini-3.5-flash-lite
+      - key: SARVAM_API_KEY
+        sync: false
+      - key: FAST2SMS_API_KEY
+        sync: false
+      - key: FAST2SMS_PHONE_NUMBER_ID
+        sync: false
+      - key: EMERGENT_EMAIL_KEY
+        sync: false
+      - key: EMAIL_FROM_NAME
+        value: AccessLayer
+
+    # Optional: auto-deploy on every push to main
+    autoDeploy: true
