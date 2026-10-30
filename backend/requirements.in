@@ -1,0 +1,24 @@
+# Core packages actually imported by the backend code
+fastapi
+uvicorn
+python-dotenv
+httpx
+asyncpg
+pydantic
+python-multipart
+python-jose[cryptography]
+PyJWT
+passlib[bcrypt]
+google-genai
+openai
+beautifulsoup4
+lxml
+boto3
+stripe
+resend
+motor
+pymongo
+aiofiles
+aiohttp
+tenacity
+srvam-ai-sdk
