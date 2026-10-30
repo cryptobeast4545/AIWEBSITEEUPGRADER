@@ -17,5 +17,12 @@ export function useApi() {
   }, [getToken]);
 }
 
-export const embedSnippet = (siteId) =>
-  `<!-- AccessLayer: paste into your website <head> -->\n<script src="${WIDGET_SRC}"\n  data-site-id="${siteId}"\n  data-autofix="true"\n  data-sarvam-voice="enabled" async></script>`;
+export const embedSnippet = (siteId) => {
+  // The snippet is pasted into *external* websites, so the script src MUST be
+  // absolute. When the dashboard is served same-origin as the backend (Render
+  // build with REACT_APP_BACKEND_URL=""), derive the origin at runtime; when
+  // deployed separately, use the configured REACT_APP_BACKEND_URL.
+  const base = BACKEND || (typeof window !== "undefined" ? window.location.origin : "");
+  const src = `${base}/api/widget.js`;
+  return `<!-- AccessLayer: paste into your website <head> -->\n<script src="${src}"\n  data-site-id="${siteId}"\n  data-autofix="true"\n  data-sarvam-voice="enabled" async></script>`;
+};
