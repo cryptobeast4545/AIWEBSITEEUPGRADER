@@ -1,6 +1,7 @@
 import "@/App.css";
+import { useRef } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { Show, SignIn, SignUp } from "@clerk/react";
+import { Show, SignIn, SignUp, useAuth } from "@clerk/react";
 import { Toaster } from "@/components/ui/sonner";
 import ClerkAuthProvider from "@/components/auth/ClerkAuthProvider";
 import Landing from "@/pages/Landing";
@@ -10,12 +11,17 @@ import Report from "@/pages/Report";
 import Demo from "@/pages/Demo";
 import AuthShell from "@/components/AuthShell";
 
-const Protected = ({ children }) => (
-  <>
-    <Show when="signed-in">{children}</Show>
-    <Show when="signed-out"><Navigate to="/sign-in" replace /></Show>
-  </>
-);
+const Protected = ({ children }) => {
+  const { isSignedIn } = useAuth();
+  const wasIn = useRef(false);
+  if (isSignedIn) wasIn.current = true;
+  return (
+    <>
+      <Show when="signed-in">{children}</Show>
+      <Show when="signed-out"><Navigate to={wasIn.current ? "/" : "/sign-in"} replace /></Show>
+    </>
+  );
+};
 
 function App() {
   return (

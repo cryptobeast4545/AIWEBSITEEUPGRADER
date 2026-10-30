@@ -21,7 +21,7 @@ function ViolationRow({ v, onFix, tip }) {
       <button className="flex w-full items-center gap-3 p-4 text-left" onClick={() => setOpen(!open)} aria-expanded={open} data-testid={`violation-toggle-${v.id}`}>
         <ImpactBadge impact={v.impact} />
         <span className="flex-1 font-semibold">{v.help}</span>
-        <span className="font-mono text-xs text-slate-400">{v.count} el.</span>
+        <span className="font-mono text-xs text-slate-400">{v.count ? `${v.count} el.` : "page"}</span>
         <ChevronDown className={`h-4 w-4 text-slate-400 transition-transform ${open ? "rotate-180" : ""}`} aria-hidden="true" />
       </button>
       {open && (

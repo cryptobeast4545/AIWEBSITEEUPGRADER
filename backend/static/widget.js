@@ -425,7 +425,8 @@
   var lastScan = null;
   function runScan() {
     var btn = root.getElementById('al-scan');
-    btn.disabled = true; btn.textContent = 'Scanning page…';
+    if (btn.getAttribute('aria-busy') === 'true') return Promise.resolve();
+    btn.setAttribute('aria-busy', 'true'); btn.textContent = 'Scanning page…';
     return loadAxe().then(function (axe) {
       return axe.run({ exclude: [['#accesslayer-root']] }, { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'best-practice'] }, resultTypes: ['violations'] });
     }).then(function (res) {
@@ -438,7 +439,7 @@
       });
     }).then(function (r) { lastScan.score = r.a11y_score; lastScan.counts = r.counts; renderScan(); announce('Scan complete. Score ' + r.a11y_score + ' out of 100'); })
       .catch(function () { root.getElementById('al-scan-out').textContent = 'Scan failed to load. Check your connection.'; })
-      .finally(function () { btn.disabled = false; btn.textContent = 'Re-scan this page'; });
+      .finally(function () { btn.removeAttribute('aria-busy'); btn.textContent = 'Re-scan this page'; });
   }
 
   /* ---------- UI (Shadow DOM) ---------- */
@@ -522,9 +523,12 @@
         else if (!e.shiftKey && a === f[f.length - 1]) { e.preventDefault(); f[0].focus(); }
       }
     });
-    document.addEventListener('keydown', function (e) { if (e.altKey && (e.key === 'a' || e.key === 'A' || e.code === 'KeyA')) { e.preventDefault(); toggle(); } });
+    document.addEventListener('keydown', function (e) {
+      if (e.altKey && (e.key === 'a' || e.key === 'A' || e.code === 'KeyA')) { e.preventDefault(); toggle(); }
+      else if (e.key === 'Escape' && panel.classList.contains('open') && !panel.contains(root.activeElement)) toggle(false);
+    });
     ['high', 'dark', 'invert', 'mono', 'light'].forEach(function (c) { $('al-c-' + c).onclick = function () { prefs.contrast = prefs.contrast === c ? 'none' : c; applyPrefs(); }; });
-    ['dyslexic', 'readable'].forEach(function (f) { $('al-f-' + f).onclick = function () { prefs.font = prefs.font === f ? 'default' : f; if (f === 'dyslexic' && prefs.font === f) prefs.spacing = true; applyPrefs(); }; });
+    ['dyslexic', 'readable'].forEach(function (f) { $('al-f-' + f).onclick = function () { var was = prefs.font === 'dyslexic'; prefs.font = prefs.font === f ? 'default' : f; if (prefs.font === 'dyslexic') prefs.spacing = true; else if (was) prefs.spacing = false; applyPrefs(); }; });
     ['spacing', 'cursor', 'focus', 'links', 'motion', 'guide'].forEach(function (k) { $('al-' + k).onclick = function () { prefs[k] = !prefs[k]; applyPrefs(); }; });
     $('al-zoom-in').onclick = function () { prefs.zoom = Math.min(200, prefs.zoom + 10); applyPrefs(); };
     $('al-zoom-out').onclick = function () { prefs.zoom = Math.max(80, prefs.zoom - 10); applyPrefs(); };

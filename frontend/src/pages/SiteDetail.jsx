@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useParams, useSearchParams, useNavigate, Link } from "react-router-dom";
 import { Loader2, Play, Mail, MessageCircle, Trash2, ArrowLeft, ExternalLink, Share2 } from "lucide-react";
 import { toast } from "sonner";
@@ -102,8 +102,9 @@ export default function SiteDetail() {
     } catch (e) { toast.error(errMsg(e)); } finally { setBusy(""); }
   }, [api, id]);
 
+  const auditOnce = useRef(false);
   useEffect(() => {
-    load().then(() => { if (params.get("audit")) { setParams({}); runAudit(); } }).catch((e) => { toast.error(errMsg(e)); nav("/dashboard"); });
+    load().then(() => { if (params.get("audit") && !auditOnce.current) { auditOnce.current = true; setParams({}); runAudit(); } }).catch((e) => { toast.error(errMsg(e)); nav("/dashboard"); });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 

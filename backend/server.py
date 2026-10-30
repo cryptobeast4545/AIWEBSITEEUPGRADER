@@ -21,7 +21,7 @@ import db  # noqa: E402
 import ai  # noqa: E402
 import voice  # noqa: E402
 import notify  # noqa: E402
-from audit_engine import run_url_audit, score_violations, normalize_axe, normalize_url  # noqa: E402
+from audit_engine import run_url_audit, score_violations, normalize_axe, normalize_url, safe_client  # noqa: E402
 from clerk_auth import clerk_router, require_user  # noqa: E402
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
@@ -121,8 +121,8 @@ def report_url(origin, audit_id):
 
 async def check_drop_alert(site: dict, audit: dict):
     try:
-        prev = await db.fetchrow("select a11y_score from al_audits where site_id=$1 and id<>$2 order by created_at desc limit 1",
-                                 site["id"], audit["id"])
+        prev = await db.fetchrow("select a11y_score from al_audits where site_id=$1 and id<>$2 and source=$3 order by created_at desc limit 1",
+                                 site["id"], audit["id"], audit["source"])
         if not prev or not site.get("alerts_enabled"):
             return
         drop = prev["a11y_score"] - audit["a11y_score"]
@@ -193,16 +193,23 @@ async def widget_config(site_id: str):
             "sarvam": voice.configured(), "ai": ai.configured()}
 
 
+def _host_matches(origin: str, site_url: str) -> bool:
+    from urllib.parse import urlparse
+    o = (urlparse(origin).hostname or "").removeprefix("www.")
+    s = (urlparse(site_url).hostname or "").removeprefix("www.")
+    return bool(o) and (o == s or o.endswith("." + s))
+
+
 @api.post("/widget/{site_id}/report")
-async def widget_report(site_id: str, body: WidgetReport, bg: BackgroundTasks):
+async def widget_report(site_id: str, body: WidgetReport, request: Request):
     s = await widget_site(site_id)
+    if site_id != "demo" and not _host_matches(request.headers.get("origin") or body.url, s["url"]):
+        raise HTTPException(403, "Reports are only accepted from the registered website")
     violations = normalize_axe(body.violations)
     score, counts = score_violations(violations)
     result = {"url": body.url[:500], "a11y_score": score, "seo_score": None, "counts": counts, "violations": violations,
               "meta": {"engine": "axe-core (in-browser, live DOM)", "passes": body.passes}}
     audit = await save_audit(site_id, s["user_id"], "widget", result)
-    if site_id != "demo":
-        bg.add_task(check_drop_alert, s, audit)
     return {"id": audit["id"], "a11y_score": score, "counts": counts}
 
 
@@ -218,7 +225,7 @@ async def widget_alt(site_id: str, body: AltIn):
     hit = await db.fetchrow("select alt from al_alt_cache where src=$1", key)
     if hit:
         return {"alt": hit["alt"], "cached": True}
-    async with httpx.AsyncClient(timeout=15, follow_redirects=True) as c:
+    async with safe_client(timeout=15) as c:
         try:
             r = await c.get(src, headers={"User-Agent": "AccessLayerBot/2.0"})
         except httpx.HTTPError:

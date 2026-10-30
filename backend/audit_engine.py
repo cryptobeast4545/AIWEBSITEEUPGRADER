@@ -1,4 +1,6 @@
+import ipaddress
 import re
+import socket
 import time
 from collections import Counter
 from urllib.parse import urljoin, urlparse
@@ -11,6 +13,27 @@ PENALTY = {"critical": 25, "serious": 12, "moderate": 5, "minor": 2}
 UA = "Mozilla/5.0 (compatible; AccessLayerBot/2.0; +https://accesslayer.io)"
 
 
+def _public_host(host: str) -> bool:
+    try:
+        infos = socket.getaddrinfo(host, None)
+    except socket.gaierror:
+        return False
+    for info in infos:
+        ip = ipaddress.ip_address(info[4][0])
+        if ip.is_private or ip.is_loopback or ip.is_link_local or ip.is_reserved or ip.is_multicast or ip.is_unspecified:
+            return False
+    return True
+
+
+async def assert_public_request(request):
+    if not _public_host(request.url.host):
+        raise HTTPException(400, "That address is not a public website")
+
+
+def safe_client(**kw):
+    return httpx.AsyncClient(follow_redirects=True, event_hooks={"request": [assert_public_request]}, **kw)
+
+
 def normalize_url(url: str) -> str:
     url = (url or "").strip()
     if not url:
@@ -18,7 +41,7 @@ def normalize_url(url: str) -> str:
     if not re.match(r"^https?://", url, re.I):
         url = "https://" + url
     p = urlparse(url)
-    if not p.hostname or "." not in p.hostname or p.hostname in ("localhost",) or p.hostname.startswith(("127.", "10.", "192.168.", "169.254.")):
+    if not p.hostname or "." not in p.hostname:
         raise HTTPException(400, "Please enter a valid public website URL")
     return url
 
@@ -175,7 +198,7 @@ async def _exists(client, url):
     try:
         r = await client.get(url)
         return r.status_code == 200 and len(r.text) > 10
-    except Exception:
+    except (Exception, HTTPException):
         return False
 
 
@@ -222,11 +245,13 @@ async def seo_checks(soup, url, html_bytes, elapsed, client):
 
 async def run_url_audit(url: str):
     url = normalize_url(url)
-    async with httpx.AsyncClient(timeout=20, follow_redirects=True, headers={"User-Agent": UA}) as client:
+    async with safe_client(timeout=20, headers={"User-Agent": UA}) as client:
         try:
             t0 = time.monotonic()
             r = await client.get(url)
             elapsed = time.monotonic() - t0
+        except HTTPException:
+            raise
         except httpx.HTTPError:
             raise HTTPException(422, "Could not reach that website. Check the URL and try again.")
         if r.status_code >= 400:
