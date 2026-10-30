@@ -7,14 +7,19 @@ from html.parser import HTMLParser
 from urllib.parse import urlparse
 
 import httpx
+import resend
 from fastapi import HTTPException
 
 logger = logging.getLogger(__name__)
 
-EMAIL_BASE_URL = "https://integrations.emergentagent.com"
-EMAIL_KEY = os.environ["EMERGENT_EMAIL_KEY"]
-EMAIL_FROM_NAME = os.environ["EMAIL_FROM_NAME"]
+RESEND_API_KEY = os.environ.get("RESEND_API_KEY", "")
+EMAIL_FROM = os.environ.get("EMAIL_FROM", "")          # e.g. "AccessLayer <no-reply@yourdomain.com>"
+EMAIL_FROM_NAME = os.environ.get("EMAIL_FROM_NAME", "AccessLayer")
 EMAIL_REPLY_TO = os.environ.get("EMAIL_REPLY_TO")
+
+# Initialise the Resend client once at import time (key may be empty during tests)
+if RESEND_API_KEY:
+    resend.api_key = RESEND_API_KEY
 
 _SHORTENERS = ("bit.ly", "tinyurl.com", "t.co", "is.gd", "cutt.ly", "goo.gl", "rebrand.ly")
 _CRED_ASK = ("reply with your password", "reply with the code", "send your password", "cvv",
@@ -91,27 +96,24 @@ def _assert_safe_email(subject: str, html: str) -> None:
 
 async def send_email(*, to: str, subject: str, html: str) -> str | None:
     _assert_safe_email(subject, html)
-    payload = {"to": [to], "subject": subject, "html": html, "from_name": EMAIL_FROM_NAME}
+    if not RESEND_API_KEY:
+        raise HTTPException(status_code=503, detail="Email is not configured (missing RESEND_API_KEY)")
+    if not EMAIL_FROM:
+        raise HTTPException(status_code=503, detail="Email is not configured (missing EMAIL_FROM)")
+    params: resend.Emails.SendParams = {
+        "from": EMAIL_FROM,
+        "to": [to],
+        "subject": subject,
+        "html": html,
+    }
     if EMAIL_REPLY_TO:
-        payload["contact_email"] = EMAIL_REPLY_TO
+        params["reply_to"] = [EMAIL_REPLY_TO]
     try:
-        async with httpx.AsyncClient(timeout=30) as client:
-            resp = await client.post(f"{EMAIL_BASE_URL}/api/v1/email/send", headers={"X-Email-Key": EMAIL_KEY}, json=payload)
-        resp.raise_for_status()
-        return resp.json().get("id")
-    except httpx.HTTPStatusError as e:
-        try:
-            code = e.response.json().get("code", "")
-        except ValueError:
-            code = ""
-        if code in ("insufficient_credits", "integration_disabled", "daily_limit_reached"):
-            logger.warning(f"Email paused: {code} ({e.response.status_code})")
-            raise HTTPException(status_code=503, detail="Email is temporarily unavailable")
-        logger.error(f"Email send failed: {e.response.status_code} {e.response.text}")
-        raise HTTPException(status_code=502, detail="Failed to send email")
+        email = resend.Emails.send(params)
+        return email.get("id")
     except Exception as e:
-        logger.error(f"Email send error: {str(e)}")
-        raise HTTPException(status_code=500, detail="Failed to send email")
+        logger.error(f"Resend email failed: {str(e)}")
+        raise HTTPException(status_code=502, detail="Failed to send email")
 
 
 def _color(s):
@@ -152,6 +154,10 @@ def normalize_phone(phone: str) -> str:
 
 def whatsapp_configured():
     return bool(os.environ.get("FAST2SMS_API_KEY") and os.environ.get("FAST2SMS_PHONE_NUMBER_ID"))
+
+
+def email_configured():
+    return bool(RESEND_API_KEY and EMAIL_FROM)
 
 
 async def send_whatsapp(phone: str, message: str):

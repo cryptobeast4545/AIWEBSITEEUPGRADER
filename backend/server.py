@@ -154,7 +154,7 @@ async def integrations_status():
     except HTTPException:
         ok_db = False
     return {"database": ok_db, "ai": ai.configured(), "voice": voice.configured(),
-            "whatsapp": notify.whatsapp_configured(), "email": True, "model": ai.model_name()}
+            "whatsapp": notify.whatsapp_configured(), "email": notify.email_configured(), "model": ai.model_name()}
 
 
 @api.get("/widget.js")
