@@ -1,0 +1,95 @@
+{
+  "project_name": "A11yEngine (Accessibility & Compliance Suite)",
+  "app_type": "hybrid_fullstack",
+  "archetype": "ORGANIC_PRECISION_TACTICAL",
+  "theme": "dark_light_adaptable",
+  "data_testid_requirement": "ALL interactive and key informational elements MUST include data-testid attribute in kebab-case format (e.g. data-testid=\"run-audit-btn\", data-testid=\"accessibility-score-badge\", data-testid=\"shadow-widget-toggle\").",
+  "typography": {
+    "heading_font": "Plus Jakarta Sans, sans-serif",
+    "body_font": "Inter, sans-serif",
+    "mono_font": "JetBrains Mono, monospace",
+    "dyslexic_font": "OpenDyslexic, sans-serif",
+    "hierarchy": {
+      "h1": "text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight",
+      "h2": "text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight",
+      "h3": "text-xl sm:text-2xl font-semibold",
+      "h4": "text-lg sm:text-xl font-medium",
+      "body": "text-base leading-relaxed text-slate-300 dark:text-slate-300 light:text-slate-700",
+      "caption": "text-xs font-mono uppercase tracking-widest text-emerald-400"
+    }
+  },
+  "colors": {
+    "dark_mode": {
+      "bg_primary": "#0B0F19",
+      "bg_surface": "#111827",
+      "bg_card": "#1F2937",
+      "border": "#374151",
+      "primary": "#10B981",
+      "primary_hover": "#059669",
+      "accent_blue": "#3B82F6",
+      "accent_purple": "#8B5CF6",
+      "text_primary": "#F9FAFB",
+      "text_secondary": "#9CA3AF",
+      "critical_red": "#EF4444",
+      "serious_orange": "#F97316",
+      "moderate_yellow": "#F59E0B",
+      "minor_blue": "#60A5FA"
+    },
+    "light_mode": {
+      "bg_primary": "#F8FAFC",
+      "bg_surface": "#FFFFFF",
+      "bg_card": "#F1F5F9",
+      "border": "#E2E8F0",
+      "primary": "#059669",
+      "primary_hover": "#047857",
+      "accent_blue": "#2563EB",
+      "accent_purple": "#7C3AED",
+      "text_primary": "#0F172A",
+      "text_secondary": "#475569",
+      "critical_red": "#DC2626",
+      "serious_orange": "#EA580C",
+      "moderate_yellow": "#D97706",
+      "minor_blue": "#2563EB"
+    }
+  },
+  "layout_and_bento": {
+    "landing_hero": "Split column or high-impact bento grid featuring live WCAG score gauge (0-100), automated embed snippet generator, and interactive widget sandbox preview.",
+    "dashboard_grid": "High density grid (grid-cols-1 md:grid-cols-4 gap-6). Header summary stats (sites, total audits, compliance rate, pending fixes) + Site Cards + Violation Matrix chart + Audit History log.",
+    "widget_panel": "Floating Shadow DOM drawer overlay pinned to bottom-right or bottom-left, z-index 999999, accessible via Alt+A or screen reader prompt."
+  },
+  "image_urls": [
+    {
+      "category": "hero_diversity",
+      "url": "https://images.unsplash.com/photo-1576864333223-db90dadfb975?crop=entropy&cs=srgb&fm=jpg&q=85",
+      "description": "Accessible digital signage and inclusive icon"
+    },
+    {
+      "category": "accessibility_work",
+      "url": "https://images.unsplash.com/photo-1581090123456-6405208b0264?crop=entropy&cs=srgb&fm=jpg&q=85",
+      "description": "Diverse workplace using technology"
+    },
+    {
+      "category": "user_inclusive",
+      "url": "https://images.unsplash.com/photo-1732194438396-394d2b7c2436?crop=entropy&cs=srgb&fm=jpg&q=85",
+      "description": "Inclusive digital workspace user in wheelchair"
+    }
+  ],
+  "key_features_to_build": [
+    "Landing Page with WCAG statistics (96.3% failure rate), live interactive widget preview, instant site scanner demo, and snippet copy.",
+    "Auth System with email/password login and register modals/pages.",
+    "Dashboard with Site Management: Add domain, generate JavaScript embed script (<script src='.../widget.js' data-site-id='...'></script>).",
+    "One-click Audit Runner powered by axe-core in browser/backend: scores 0-100, WCAG 2.1 AA violation classification (Critical, Serious, Moderate, Minor), AI fix suggestions via Gemini.",
+    "SEO Audit Integration: checks meta tags, headings structure, image alt tags, open graph tags, canonical links.",
+    "WhatsApp Bot Simulation / Integration: #AUDIT command via Fast2SMS with instant score notification and compliance alerts.",
+    "Resend / Email Scorecard generator sending beautifully formatted HTML accessibility audit reports.",
+    "Drop-in Embeddable JavaScript Widget (Shadow DOM panel): high contrast modes, dyslexia font toggle (OpenDyslexic), text resizing, line spacing, cursor enlarger, screen reader TTS / Sarvam Indic STT voice control mode, focus highlight mode, auto AI vision image alt fixer."
+  ],
+  "instructions_to_main_agent": [
+    "Ensure all interactive components (buttons, toggles, form inputs, modals, cards, tabs) have unique `data-testid` attributes.",
+    "Do NOT rely on generic grey default styles. Use crisp 1px borders, high contrast ratios (minimum 4.5:1 for normal text, 3:1 for large text), and focus ring indicators (`focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2`).",
+    "For the Drop-in Widget: Render inside a Shadow DOM or isolated scope so website CSS doesn't bleed into it. Include toggles for: Contrast (Invert, Dark, High Contrast, Monochromatic), Text Size (100% - 200%), Font (Default, OpenDyslexic, Sans, Mono), Spacing, Voice Navigation (Indic STT/TTS), Keyboard Highlight, and Live axe-core scanner button.",
+    "Use Lucide-react or Phosphor Icons for accessible icon buttons with explicit `aria-label` tags.",
+    "Ensure Sonner toast notifications notify users when audit completes, script is copied, or email/WhatsApp reports are dispatched.",
+    "Make sure every chart uses accessible color palettes with clear legends and tooltips."
+  ]
+}
