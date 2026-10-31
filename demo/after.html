@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Lumière Studio — Interior & Spatial Design (with AccessLayer)</title>
+<meta name="description" content="Lumière Studio designs calm, considered interiors for homes and hospitality. Accessible, AccessLayer-enabled demo (AFTER)." />
+<meta name="theme-color" content="#1c1a16" />
+
+<!-- AccessLayer widget integration (AFTER) -->
+<script src="https://aiwebsiteeupgrader.onrender.com/api/widget.js"
+        data-site-id="site_ccab1c30da87"
+        data-autofix="true"
+        data-sarvam-voice="enabled" async></script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#fffdf9; --cream:#f6f1e9; --cream-2:#efe7da;
+    --ink:#1c1a16; --ink-soft:#46413a; --muted:#8c857a; --line:#ece5da;
+    --accent:#b95a37; --accent-deep:#8f3f22; --accent-soft:#f7ece4;
+    --shadow:0 1px 2px rgba(28,26,22,.04),0 18px 40px -18px rgba(28,26,22,.18);
+    --radius:20px; --maxw:1180px;
+  }
+  html{scroll-behavior:smooth}
+  body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);background:var(--bg);line-height:1.65;-webkit-font-smoothing:antialiased}
+  h1,h2,h3,h4{font-family:'Playfair Display',Georgia,serif;font-weight:600;line-height:1.12;color:var(--ink);letter-spacing:-0.01em}
+  a{color:inherit;text-decoration:none}
+  img{display:block;max-width:100%;height:auto}
+  .container{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+  section{padding:84px 0}
+  .eyebrow{font-size:.78rem;letter-spacing:.18em;text-transform:uppercase;color:var(--accent-deep);font-weight:600}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+  .skip-link{position:absolute;left:-999px;top:8px;background:#fff;color:var(--ink);padding:10px 16px;border-radius:10px;border:1px solid var(--line);z-index:1000}
+  .skip-link:focus{left:8px}
+
+  .nav{position:sticky;top:0;z-index:50;background:rgba(255,253,249,.85);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .nav-inner{display:flex;align-items:center;justify-content:space-between;height:74px}
+  .logo{display:flex;align-items:center;gap:10px;font-family:'Playfair Display',serif;font-size:1.35rem;font-weight:700}
+  .logo .mark{width:30px;height:30px;border-radius:8px;background:var(--accent);display:grid;place-items:center;color:#fff;font-size:.8rem}
+  .nav-links{display:flex;gap:30px;align-items:center}
+  .nav-links a{font-size:.95rem;color:var(--ink-soft);font-weight:500}
+  .nav-links a:hover{color:var(--accent-deep)}
+  .nav-actions{display:flex;align-items:center;gap:14px}
+  .nav-toggle{display:none}
+  .btn{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:999px;font-size:.93rem;font-weight:600;transition:transform .15s,box-shadow .15s,background .15s,border-color .15s}
+  button.btn{font-family:inherit;border:0}
+  .btn-primary{background:var(--accent);color:#fff}
+  .btn-primary:hover{background:var(--accent-deep)}
+  .btn-ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+  .btn-ghost:hover{border-color:var(--ink)}
+  .btn:active{transform:translateY(1px)}
+
+  .hero{padding:60px 0 40px}
+  .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center}
+  .hero h1{font-size:clamp(2.4rem,5vw,3.9rem);margin:18px 0 20px}
+  .hero p.lead{font-size:1.12rem;color:var(--ink-soft);max-width:46ch;margin-bottom:30px}
+  .hero-cta{display:flex;gap:14px;flex-wrap:wrap}
+  .hero-img{position:relative}
+  .hero-img img{border-radius:var(--radius);box-shadow:var(--shadow);width:100%;aspect-ratio:4/5;object-fit:cover}
+  .hero-badge{position:absolute;bottom:18px;left:-22px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 16px;box-shadow:var(--shadow);display:flex;gap:10px;align-items:center;font-size:.85rem}
+  .hero-badge b{font-family:'Playfair Display',serif;font-size:1.2rem}
+
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;padding:40px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .stat .num{font-family:'Playfair Display',serif;font-size:2.1rem;color:var(--ink)}
+  .stat .label{font-size:.82rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}
+
+  .shead{max-width:60ch;margin-bottom:48px}
+  .shead h2{font-size:clamp(1.9rem,3.5vw,2.7rem);margin:12px 0 14px}
+  .shead p{color:var(--ink-soft)}
+
+  .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:30px;transition:transform .18s,box-shadow .18s}
+  .card:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
+  .card .ic{width:46px;height:46px;border-radius:12px;background:var(--accent-soft);color:var(--accent-deep);display:grid;place-items:center;margin-bottom:18px}
+  .card h3{font-size:1.32rem;margin-bottom:10px}
+  .card p{color:var(--ink-soft);font-size:.98rem}
+
+  .gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .g{position:relative;border-radius:16px;overflow:hidden;aspect-ratio:4/3;display:block}
+  .g img{width:100%;height:100%;object-fit:cover;transition:transform .4s}
+  .g:hover img{transform:scale(1.05)}
+  .g .cap{position:absolute;left:14px;bottom:12px;color:#fff;font-weight:600;text-shadow:0 1px 10px rgba(0,0,0,.55);font-size:.95rem}
+
+  .about{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+  .about-img img{border-radius:var(--radius);box-shadow:var(--shadow);width:100%;aspect-ratio:5/6;object-fit:cover}
+  .about h2{font-size:clamp(1.9rem,3.5vw,2.7rem);margin:14px 0 18px}
+  .about p{color:var(--ink-soft);margin-bottom:16px}
+  .values{list-style:none;margin-top:18px;display:grid;gap:12px}
+  .values li{display:flex;gap:12px;align-items:flex-start;font-size:.98rem;color:var(--ink-soft)}
+  .values .v{width:22px;height:22px;border-radius:6px;background:var(--accent-soft);color:var(--accent-deep);display:grid;place-items:center;flex:none}
+
+  .tcards{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+  .tcard{background:var(--cream);border-radius:var(--radius);padding:30px}
+  .tcard .quote{font-family:'Playfair Display',serif;font-size:1.15rem;line-height:1.5;margin-bottom:18px;color:var(--ink)}
+  .tcard .who{font-size:.9rem;color:var(--muted)}
+  .tcard .who b{color:var(--ink);display:block;font-size:.95rem}
+
+  .cta-band{background:var(--ink);color:#fff;border-radius:var(--radius);padding:64px 40px;text-align:center}
+  .cta-band h2{color:#fff;font-size:clamp(2rem,4vw,3rem);margin:10px 0 12px}
+  .cta-band p{color:#d8d2c9;max-width:50ch;margin:0 auto 26px}
+  .cta-band .btn-primary{background:var(--accent)}
+  .cta-band .btn-primary:hover{background:var(--accent-deep)}
+
+  .footer{background:var(--cream);padding:60px 0 30px;margin-top:20px}
+  .fgrid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1.4fr;gap:36px;margin-bottom:40px}
+  .footer .brand-blurb{color:var(--ink-soft);font-size:.93rem;max-width:34ch;margin-top:12px}
+  .footer h4{font-family:'Inter',sans-serif;font-size:.8rem;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin-bottom:16px;font-weight:600}
+  .footer ul{list-style:none;display:grid;gap:10px}
+  .footer ul a{color:var(--ink-soft);font-size:.95rem}
+  .footer ul a:hover{color:var(--accent-deep)}
+  .news form{display:flex;gap:8px;margin-top:8px}
+  .news input{flex:1;padding:12px 14px;border:1px solid var(--line);border-radius:10px;font:inherit;background:#fff}
+  .news .btn{padding:12px 18px}
+  .fbottom{border-top:1px solid var(--line);padding-top:22px;display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:.86rem;flex-wrap:wrap;gap:12px}
+  .socials{display:flex;gap:10px}
+  .socials a{width:36px;height:36px;border-radius:9px;border:1px solid var(--line);display:grid;place-items:center;color:var(--ink-soft)}
+  .socials a:hover{border-color:var(--accent);color:var(--accent-deep)}
+
+  a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:8px}
+  .demo-pill{position:fixed;left:16px;bottom:16px;z-index:60;font-size:.72rem;font-weight:700;letter-spacing:.06em;padding:8px 12px;border-radius:999px;background:#0f7a4e;color:#fff;box-shadow:var(--shadow)}
+
+  @media(max-width:900px){
+    .nav-links{display:none}
+    .nav-toggle{display:grid}
+    .nav-links.open{display:flex;position:absolute;top:74px;left:0;right:0;background:#fff;flex-direction:column;padding:20px 24px;border-bottom:1px solid var(--line);gap:18px}
+    .hero-grid,.about{grid-template-columns:1fr;gap:32px}
+    .stats{grid-template-columns:repeat(2,1fr);gap:30px}
+    .cards,.tcards{grid-template-columns:1fr}
+    .gallery{grid-template-columns:repeat(2,1fr)}
+    .fgrid{grid-template-columns:1fr 1fr}
+  }
+  @media(max-width:560px){.gallery{grid-template-columns:1fr}.fgrid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<header class="nav">
+  <div class="container nav-inner">
+    <a href="#" class="logo"><span class="mark">L</span> Lumière</a>
+    <nav id="nav" aria-label="Primary navigation">
+      <div class="nav-links" id="nav-links">
+        <a href="#studio">Studio</a>
+        <a href="#work">Work</a>
+        <a href="#process">Process</a>
+        <a href="#words">Words</a>
+        <a href="#contact">Contact</a>
+      </div>
+    </nav>
+    <div class="nav-actions">
+      <button class="btn btn-primary" type="button">Book a consult</button>
+      <button class="nav-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="nav-links">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <section class="hero container" id="studio">
+    <div class="hero-grid">
+      <div>
+        <p class="eyebrow">Interior &amp; Spatial Design — Est. 2014</p>
+        <h1>Spaces shaped around the way you live.</h1>
+        <p class="lead">We design calm, considered interiors for homes and hospitality — balancing light, texture, and craft into rooms that feel effortlessly yours.</p>
+        <div class="hero-cta">
+          <button class="btn btn-primary" type="button">Start a project</button>
+          <a class="btn btn-ghost" href="#work">View our work</a>
+        </div>
+      </div>
+      <div class="hero-img">
+        <img src="https://picsum.photos/seed/lumiere-hero/1100/1320" alt="A sunlit living room with linen seating, oak floors, and a sculptural pendant light." width="1100" height="1320" />
+        <div class="hero-badge"><b>140+</b><span>projects delivered<br>across 32 cities</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="container" style="padding:0 24px">
+    <div class="stats">
+      <div class="stat"><div class="num">140+</div><div class="label">Projects</div></div>
+      <div class="stat"><div class="num">18</div><div class="label">Design awards</div></div>
+      <div class="stat"><div class="num">9</div><div class="label">Years in practice</div></div>
+      <div class="stat"><div class="num">32</div><div class="label">Cities served</div></div>
+    </div>
+  </section>
+
+  <section id="process" class="container">
+    <div class="shead">
+      <p class="eyebrow">What we do</p>
+      <h2>Design for the way you actually live.</h2>
+      <p>Three practices, one studio — each project begins with listening and ends with a space you recognise as your own.</p>
+    </div>
+    <div class="cards">
+      <article class="card">
+        <div class="ic" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5L12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5"/><path d="M9.5 21v-6h5v6"/></svg></div>
+        <h3>Residential</h3>
+        <p>Homes tailored to how you live — from the first concept to the last cushion, with light and proportion doing the heavy lifting.</p>
+      </article>
+      <article class="card">
+        <div class="ic" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h11v6a4 4 0 0 1-4 4H9a4 4 0 0 1-4-4z"/><path d="M16 9h2.5a2 2 0 0 1 0 4H16"/><path d="M7 3c0 1 1 1.5 1 2.5S7 7 7 8"/><path d="M11 3c0 1 1 1.5 1 2.5S11 7 11 8"/></svg></div>
+        <h3>Hospitality</h3>
+        <p>Hotels and restaurants that feel like a place guests return to — warm, durable, and quietly memorable.</p>
+      </article>
+      <article class="card">
+        <div class="ic" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7.5" width="18" height="12.5" rx="2"/><path d="M8 7.5V6a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v1.5"/><path d="M3 13h18"/></svg></div>
+        <h3>Workspace</h3>
+        <p>Offices tuned for focus, comfort, and the culture of your team — spaces that make Monday a little easier to like.</p>
+      </article>
+    </div>
+  </section>
+
+  <section id="work" class="container">
+    <div class="shead">
+      <p class="eyebrow">Selected work</p>
+      <h2>Rooms with a quiet point of view.</h2>
+    </div>
+    <div class="gallery">
+      <a class="g" href="#"><img src="https://picsum.photos/seed/lumiere-work-1/720/540" alt="Marlow House: a minimalist dining room with a long oak table and soft daylight." /><span class="cap">Marlow House</span></a>
+      <a class="g" href="#"><img src="https://picsum.photos/seed/lumiere-work-2/720/540" alt="Café Nora: a warm hospitality interior with terracotta walls and rattan chairs." /><span class="cap">Café Nora</span></a>
+      <a class="g" href="#"><img src="https://picsum.photos/seed/lumiere-work-3/720/540" alt="Atelier Loft: an open-plan studio with exposed beams and pale linen furnishings." /><span class="cap">Atelier Loft</span></a>
+      <a class="g" href="#"><img src="https://picsum.photos/seed/lumiere-work-4/720/540" alt="Hotel Sorana: a boutique hotel lobby with a stone reception desk and soft pendant lighting." /><span class="cap">Hotel Sorana</span></a>
+      <a class="g" href="#"><img src="https://picsum.photos/seed/lumiere-work-5/720/540" alt="Field Apartment: a quiet bedroom in muted clay tones with a single reading chair." /><span class="cap">Field Apartment</span></a>
+      <a class="g" href="#"><img src="https://picsum.photos/seed/lumiere-work-6/720/540" alt="North Studio: a workspace with pale oak desks, task lamps, and greenery." /><span class="cap">North Studio</span></a>
+    </div>
+  </section>
+
+  <section class="container">
+    <div class="about">
+      <div class="about-img"><img src="https://picsum.photos/seed/lumiere-about/1000/1200" alt="A designer reviewing fabric swatches and material samples on a workbench in the Lumière studio." width="1000" height="1200" /></div>
+      <div>
+        <p class="eyebrow">The studio</p>
+        <h2>A studio led by makers and listeners.</h2>
+        <p>Lumière is a small, hands-on practice working between Lisbon and the coast. We believe a room should hold its calm — that good design disappears into the background of a life well lived.</p>
+        <p>Every project starts with a conversation and a sketch, never a moodboard downloaded from the internet.</p>
+        <ul class="values">
+          <li><span class="v" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span> Listen first — the brief always comes before the moodboard.</li>
+          <li><span class="v" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span> Material honesty — we choose what ages well, not what photographs well.</li>
+          <li><span class="v" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span> Light as a material — the first thing we design with is the day itself.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="words" class="container">
+    <div class="shead"><p class="eyebrow">Kind words</p><h2>What clients say.</h2></div>
+    <div class="tcards">
+      <article class="tcard"><p class="quote">"They turned a dark, awkward flat into the calmest room in our lives. We still can't quite believe it's ours."</p><p class="who"><b>Elena &amp; Marc Vidal</b>Marlow House</p></article>
+      <article class="tcard"><p class="quote">"The café feels like ours and somehow like everyone's at once. Bookings doubled within a season."</p><p class="who"><b>Nora Abadi</b>Café Nora</p></article>
+      <article class="tcard"><p class="quote">"A studio that actually listens. Every decision had a reason, and we were part of each one."</p><p class="who"><b>Tom Halberg</b>North Studio</p></article>
+    </div>
+  </section>
+
+  <section class="container" id="contact">
+    <div class="cta-band">
+      <p class="eyebrow" style="color:var(--accent)">Let's begin</p>
+      <h2>Let's design something lasting.</h2>
+      <p>Tell us about your space, your light, and the way you want to live in it. We take on a handful of projects each season.</p>
+      <button class="btn btn-primary" type="button">Start a project</button>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <div class="fgrid">
+      <div>
+        <a href="#" class="logo"><span class="mark">L</span> Lumière</a>
+        <p class="brand-blurb">Interior &amp; spatial design studio. We make rooms that hold their calm.</p>
+      </div>
+      <div>
+        <h4>Studio</h4>
+        <ul><li><a href="#">About</a></li><li><a href="#">Team</a></li><li><a href="#">Careers</a></li><li><a href="#">Press</a></li></ul>
+      </div>
+      <div>
+        <h4>Visit</h4>
+        <ul><li><a href="#">12 Weaver Lane</a></li><li><a href="#">Lisbon, PT</a></li><li><a href="#">Mon–Fri, 9–6</a></li></ul>
+      </div>
+      <div class="news">
+        <h4>Newsletter</h4>
+        <form>
+          <label class="sr-only" for="news">Email address</label>
+          <input id="news" name="email" type="email" placeholder="you@email.com" autocomplete="email" required />
+          <button class="btn btn-primary" type="submit">Join</button>
+        </form>
+      </div>
+    </div>
+    <div class="fbottom">
+      <span>© 2026 Lumière Studio. All rights reserved.</span>
+      <div class="socials">
+        <a href="#" aria-label="Lumière on Instagram"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="6"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.3" fill="currentColor" stroke="none"/></svg></a>
+        <a href="#" aria-label="Lumière on Pinterest"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M11 7c-2.2.2-3.4 1.7-3.1 3.7.2 1 .8 1.6 1.6 2 .5.2.6.5.4 1l-.4 1.6"/><path d="M12 7c2.4.2 3.6 1.8 3.2 4.2-.3 1.8-1.4 3.1-2.8 3.1-1 0-1.7-.8-1.4-1.8"/></svg></a>
+        <a href="#" aria-label="Lumière on LinkedIn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<div class="demo-pill" aria-hidden="true">AFTER · AccessLayer</div>
+
+<script>
+  const toggle = document.querySelector('.nav-toggle');
+  const links = document.getElementById('nav-links');
+  toggle.addEventListener('click', () => {
+    const open = links.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', String(open));
+  });
+</script>
+</body>
+</html>
